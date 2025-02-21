@@ -1,6 +1,7 @@
 package com.lerchenflo.t10elementekatalog;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
         MenuItem countermenu = menuBuilder.add(1, 10, 0, "Punktezähler");
         parentItem.setCheckable(true);
 
+        MenuItem bugreportmenu = menuBuilder.add(2, 20, 0, "Fehler melden / Vorschläge");
+        parentItem.setCheckable(true);
+
 
         loadPdf("Alle.pdf");
 
@@ -120,6 +124,14 @@ public class MainActivity extends AppCompatActivity {
                     Intent i = new Intent(MainActivity.this, punktezaehlerActivity.class);
                     startActivity(i);
                     break;
+
+                case 20: //Bugreport
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                    emailIntent.setData(Uri.parse("mailto:florian.lerchenmueller@gmail.com")); // Only email apps should handle this
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Bugreport/Featurerequest T10 App");
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Hallo Flo,\n\nich habe ein Problem:\n\nWo:\n\nWas:\n\n\nVielen Dank und auf Wiedersehen!");
+                    startActivity(emailIntent);
+
 
                 default:
                     return false;

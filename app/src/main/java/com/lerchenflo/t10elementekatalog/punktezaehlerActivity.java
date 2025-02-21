@@ -1,5 +1,6 @@
 package com.lerchenflo.t10elementekatalog;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -219,6 +221,15 @@ public class punktezaehlerActivity extends AppCompatActivity {
             resetButtons();
             selectedCount = 0;
             updateCounter();
+        });
+
+        //Backbutton
+        findViewById(R.id.backbutton_punktecounter).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(punktezaehlerActivity.this, MainActivity.class);
+                startActivity(i);
+            }
         });
 
     }
