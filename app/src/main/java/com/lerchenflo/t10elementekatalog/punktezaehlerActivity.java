@@ -236,7 +236,7 @@ public class punktezaehlerActivity extends AppCompatActivity {
 
     // Method to update the counter TextView.
     private void updateCounter() {
-        counterText.setText(String.valueOf(selectedCount));
+        counterText.setText(selectedCount + "/10");
     }
 
     // Method to reset all buttons to default appearance.
