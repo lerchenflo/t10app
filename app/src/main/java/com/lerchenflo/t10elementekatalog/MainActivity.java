@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         boolean[] isSubmenuVisible = {true};
 
         // Add a parent menu item for "Geräte & Leitbilder"
-        MenuItem countermenu = menuBuilder.add(1, 10, 0, "Punktezähler");
+        MenuItem countermenu = menuBuilder.add(1, 10, 0, "Punktezähler(Basis)");
         parentItem.setCheckable(true);
 
         MenuItem bugreportmenu = menuBuilder.add(2, 20, 0, "Fehler melden / Vorschläge");
