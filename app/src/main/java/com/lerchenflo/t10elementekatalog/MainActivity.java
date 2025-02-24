@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                                     }else if (which==2){
                                         return;
                                     }
-                                    String mailto = "mailto:florian.lerchenmueller@gmail.com" +
+                                    String mailto = "mailto:manuel@mtmayr.com" +
                                             "?subject=" + Uri.encode(subject) +
                                             "&body=" + Uri.encode(body);
                                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
