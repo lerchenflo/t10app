@@ -1,5 +1,6 @@
 package com.lerchenflo.t10elementekatalog;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -55,14 +57,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Add submenu items under the parent item
-        MenuItem balken = menuBuilder.add(0, 1, 0, submenuIndent + "Balken");
-        MenuItem barren = menuBuilder.add(0, 2, 0, submenuIndent + "Barren");
-        MenuItem boden = menuBuilder.add(0, 3, 0, submenuIndent + "Boden");
-        MenuItem minitramp = menuBuilder.add(0, 4, 0, submenuIndent + "Minitrampolin");
-        MenuItem pferd = menuBuilder.add(0, 5, 0, submenuIndent + "Pferd");
-        MenuItem reck = menuBuilder.add(0, 6, 0, submenuIndent + "Reck");
-        MenuItem ringe = menuBuilder.add(0, 7, 0, submenuIndent + "Ringe");
-        MenuItem sprung = menuBuilder.add(0, 8, 0, submenuIndent + "Sprung");
+        MenuItem alle = menuBuilder.add(0, 1, 0, submenuIndent + "Alle Elemente");
+        MenuItem balken = menuBuilder.add(0, 2, 0, submenuIndent + "Balken");
+        MenuItem barren = menuBuilder.add(0, 3, 0, submenuIndent + "Barren");
+        MenuItem boden = menuBuilder.add(0, 4, 0, submenuIndent + "Boden");
+        MenuItem minitramp = menuBuilder.add(0, 5, 0, submenuIndent + "Minitrampolin");
+        MenuItem pferd = menuBuilder.add(0, 6, 0, submenuIndent + "Pferd");
+        MenuItem reck = menuBuilder.add(0, 7, 0, submenuIndent + "Reck");
+        MenuItem ringe = menuBuilder.add(0, 8, 0, submenuIndent + "Ringe");
+        MenuItem sprung = menuBuilder.add(0, 9, 0, submenuIndent + "Sprung");
 
         // Track the visibility state of submenu items
         boolean[] isSubmenuVisible = {true};
@@ -81,27 +84,30 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case 1:
-                    loadPdf("Balken.pdf");
+                    loadPdf("Alle.pdf");
                     break;
                 case 2:
-                    loadPdf("Barren.pdf");
+                    loadPdf("Balken.pdf");
                     break;
                 case 3:
-                    loadPdf("Boden.pdf");
+                    loadPdf("Barren.pdf");
                     break;
                 case 4:
-                    loadPdf("Minitrampolin.pdf");
+                    loadPdf("Boden.pdf");
                     break;
                 case 5:
-                    loadPdf("Pferd.pdf");
+                    loadPdf("Minitrampolin.pdf");
                     break;
                 case 6:
-                    loadPdf("Reck.pdf");
+                    loadPdf("Pferd.pdf");
                     break;
                 case 7:
-                    loadPdf("Ringe.pdf");
+                    loadPdf("Reck.pdf");
                     break;
                 case 8:
+                    loadPdf("Ringe.pdf");
+                    break;
+                case 9:
                     loadPdf("Sprung.pdf");
                     break;
                 case 0:
@@ -109,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     isSubmenuVisible[0] = !isSubmenuVisible[0];
                     boolean visibility = isSubmenuVisible[0];
                     parentItem.setIcon(visibility ? com.google.android.material.R.drawable.mtrl_ic_arrow_drop_up : com.google.android.material.R.drawable.mtrl_ic_arrow_drop_down);
+                    alle.setVisible(visibility);
                     barren.setVisible(visibility);
                     reck.setVisible(visibility);
                     minitramp.setVisible(visibility);
@@ -126,11 +133,34 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case 20: //Bugreport
-                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                    emailIntent.setData(Uri.parse("mailto:florian.lerchenmueller@gmail.com")); // Only email apps should handle this
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Bugreport/Featurerequest T10 App");
-                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Hallo Flo,\n\nich habe ein Problem:\n\nWo:\n\nWas:\n\n\nVielen Dank und auf Wiedersehen!");
-                    startActivity(emailIntent);
+
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Auswählen:")
+                            .setItems(new String[]{"Bug Report", "Feature Request", "Schließen"}, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String subject = "";
+                                    String body = "";
+                                    if (which == 0) { // Bug Report
+                                        subject = "Bug Report T10 App";
+                                        body = "Hallo Flo,\n\nich habe ein Problem:\n\nWann tritt das Problem auf:\n\nWas ist das Problem:\n\nVielen Dank und auf Wiedersehen!";
+                                    } else if (which == 1) { // Feature Request
+                                        subject = "Feature Request T10 App";
+                                        body = "Hallo Flo,\n\nNeues Feature mit genauer Beschreibung:\n\nVielen Dank und auf Wiedersehen!";
+                                    }else if (which==2){
+                                        return;
+                                    }
+                                    String mailto = "mailto:florian.lerchenmueller@gmail.com" +
+                                            "?subject=" + Uri.encode(subject) +
+                                            "&body=" + Uri.encode(body);
+                                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                                    emailIntent.setData(Uri.parse(mailto));
+                                    startActivity(emailIntent);
+                                }
+                            });
+                    builder.show();
 
 
                 default:
@@ -162,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 .enableAnnotationRendering(true)
                 .defaultPage(0) // Show the first page
                 .load();
+        Log.d("PDF geladen", assetFileName);
     }
 
 

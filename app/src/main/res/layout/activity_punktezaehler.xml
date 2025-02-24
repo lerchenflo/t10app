@@ -16,7 +16,9 @@
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/titleSpinner"
+        app:layout_constraintBottom_toBottomOf="@id/titleSpinner"
+        android:background="@null"
         />
 
 
