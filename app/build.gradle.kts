@@ -10,8 +10,8 @@ android {
         applicationId = "com.lerchenflo.t10elementekatalog"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1 Beta"
+        versionCode = 3
+        versionName = "Sicherungskasta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
