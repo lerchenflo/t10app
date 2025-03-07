@@ -6,9 +6,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="15dp">
 
     <ImageButton
+        android:paddingTop="15dp"
         android:id="@+id/backbutton_punktecounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,6 +25,7 @@
 
     <!-- Spinner used as the title, centered horizontally -->
     <Spinner
+        android:paddingTop="15dp"
         android:id="@+id/titleSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,9 +41,11 @@
         android:text="0"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/titleSpinner"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp" />
+        app:layout_constraintBottom_toBottomOf="@id/titleSpinner"
+        android:paddingTop="15dp"
+        />
 
     <!-- TableLayout container for 10 buttons -->
     <TableLayout
