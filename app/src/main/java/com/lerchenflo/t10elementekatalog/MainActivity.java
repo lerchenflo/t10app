@@ -2,6 +2,7 @@ package com.lerchenflo.t10elementekatalog;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,11 +22,13 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.google.android.material.navigation.NavigationView;
+import com.shockwave.pdfium.BuildConfig;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import com.lerchenflo.t10elementekatalog.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,6 +82,19 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem bugreportmenu = menuBuilder.add(2, 20, 0, "Fehler melden / Vorschläge");
         parentItem.setCheckable(true);
+
+
+        //MenuItem versionmenu = menuBuilder.add(3,30,0, "Version: " + BuildConfig.VERSION_NAME);
+        MenuItem versionMenu = null;
+        try {
+            versionMenu = menuBuilder.add(Menu.NONE, 30, Menu.NONE, "Version "+ getPackageManager().getPackageInfo(MainActivity.this.getPackageName(), 0).versionCode);
+            versionMenu.setEnabled(false); // Make it non-clickable
+            versionMenu.setCheckable(false);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Versionerror", "Keine Version gefunden");
+        }
+
 
 
         loadPdf("Alle.pdf");
@@ -136,31 +152,34 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case 20: //Bugreport
-
-
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Auswählen:")
                             .setItems(new String[]{"Bug Report", "Feature Request", "Schließen"}, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    String subject = "";
-                                    String body = "";
-                                    if (which == 0) { // Bug Report
-                                        subject = "Bug Report T10 App";
-                                        body = "Hallo Flo,\n\nich habe ein Problem:\n\nWann tritt das Problem auf:\n\nWas ist das Problem:\n\nVielen Dank und auf Wiedersehen!";
-                                    } else if (which == 1) { // Feature Request
-                                        subject = "Feature Request T10 App";
-                                        body = "Hallo Flo,\n\nNeues Feature mit genauer Beschreibung:\n\nVielen Dank und auf Wiedersehen!";
-                                    }else if (which==2){
-                                        return;
+                                    try {
+                                        String subject = "";
+                                        String body = "";
+                                        if (which == 0) { // Bug Report
+                                            subject = "Bug Report T10 App";
+                                            body = "Hallo Flo,\n\nich habe ein Problem:\n\nWann tritt das Problem auf:\n\nWas ist das Problem:\n\nVielen Dank und auf Wiedersehen!";
+                                        } else if (which == 1) { // Feature Request
+                                            subject = "Feature Request T10 App";
+                                            body = "Hallo Flo,\n\nNeues Feature mit genauer Beschreibung:\n\nVielen Dank und auf Wiedersehen!";
+                                        }else if (which==2){
+                                            return;
+                                        }
+                                        String mailto = "mailto:manuel@mtmayr.com" +
+                                                "?subject=" + Uri.encode(subject) +
+                                                "&body=" + Uri.encode(body);
+                                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                                        emailIntent.setData(Uri.parse(mailto));
+                                        startActivity(emailIntent);
+                                    }catch (Exception e){
+                                        //Für alle Handys ohne Emailprogramm
+                                        Toast.makeText(MainActivity.this, "Kein EMAIL - Programm installiert", Toast.LENGTH_SHORT).show();
                                     }
-                                    String mailto = "mailto:manuel@mtmayr.com" +
-                                            "?subject=" + Uri.encode(subject) +
-                                            "&body=" + Uri.encode(body);
-                                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                                    emailIntent.setData(Uri.parse(mailto));
-                                    startActivity(emailIntent);
+
                                 }
                             });
                     builder.show();
