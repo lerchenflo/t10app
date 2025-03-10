@@ -125,7 +125,7 @@ public class punktezaehlerActivity extends AppCompatActivity {
         });
 
         // Reset button: restore all buttons to default background and clear selection counter.
-        Button resetButton = findViewById(R.id.resetButton);
+        ImageButton resetButton = findViewById(R.id.resetButton);
         resetButton.setOnClickListener(v -> {
             resetButtons();
             selectedCount = 0;

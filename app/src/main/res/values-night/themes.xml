@@ -27,6 +27,6 @@
         <item name="android:navigationBarColor">@color/dark_navigation_bar</item>
 
         <!-- Optional: customize button styles -->
-        <item name="materialButtonStyle">@style/Widget.MaterialComponents.Button</item>
+
     </style>
 </resources>

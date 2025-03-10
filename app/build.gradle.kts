@@ -10,8 +10,8 @@ android {
         applicationId = "com.lerchenflo.t10elementekatalog"
         minSdk = 24
         targetSdk = 35
-        versionCode = 4
-        versionName = "Beta 1.5"
+        versionCode = 6
+        versionName = "Beta 1.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,6 +38,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.room.common)
+    implementation(libs.room.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -47,5 +49,6 @@ dependencies {
 
     //Google play auto update
     implementation("com.google.android.play:app-update:2.1.0")
+    annotationProcessor(libs.room.compiler)
 
 }

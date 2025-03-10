@@ -13,6 +13,9 @@
         android:theme="@style/Theme.T10Elementekatalog"
         tools:targetApi="31">
         <activity
+            android:name=".uebungscreator"
+            android:exported="false" />
+        <activity
             android:name=".punktezaehlerActivity"
             android:exported="false" />
         <activity
