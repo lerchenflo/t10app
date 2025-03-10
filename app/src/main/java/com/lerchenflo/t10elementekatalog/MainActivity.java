@@ -2,6 +2,7 @@ package com.lerchenflo.t10elementekatalog;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -9,9 +10,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -21,14 +23,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.github.barteksc.pdfviewer.PDFView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.shockwave.pdfium.BuildConfig;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import com.lerchenflo.t10elementekatalog.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,16 +88,13 @@ public class MainActivity extends AppCompatActivity {
         parentItem.setCheckable(true);
 
 
-        //MenuItem versionmenu = menuBuilder.add(3,30,0, "Version: " + BuildConfig.VERSION_NAME);
-        MenuItem versionMenu = null;
+        TextView versiontextview = findViewById(R.id.versionTextView);
         try {
-            versionMenu = menuBuilder.add(Menu.NONE, 30, Menu.NONE, "Version "+ getPackageManager().getPackageInfo(MainActivity.this.getPackageName(), 0).versionCode);
-            versionMenu.setEnabled(false); // Make it non-clickable
-            versionMenu.setCheckable(false);
-
+            versiontextview.setText("Version "+ getPackageManager().getPackageInfo(MainActivity.this.getPackageName(), 0).versionCode);
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e("Versionerror", "Keine Version gefunden");
+            versiontextview.setVisibility(NavigationView.GONE);
         }
+
 
 
 
@@ -199,6 +200,37 @@ public class MainActivity extends AppCompatActivity {
                 this, drawerLayout, toolbar, 0, R.string.app_name);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+
+        //Appstart fertig, Google play update luaga
+        // Create an instance of AppUpdateManager
+        AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
+
+        // Returns a Task<AppUpdateInfo> object
+        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+
+        // Check if an update is available and if immediate update is allowed
+        appUpdateInfoTask.addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
+            @Override
+            public void onSuccess(AppUpdateInfo appUpdateInfo) {
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                        appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                    Log.i("Google Play", "Update verfügbar");
+                    try {
+                        // Start the immediate update flow
+                        appUpdateManager.startUpdateFlowForResult(
+                                appUpdateInfo,
+                                AppUpdateType.IMMEDIATE,
+                                MainActivity.this,
+                                0);
+                    } catch (IntentSender.SendIntentException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+
     }
 
 

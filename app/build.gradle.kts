@@ -11,7 +11,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 4
-        versionName = "Radarkasta"
+        versionName = "Beta 1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -23,7 +23,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            versionNameSuffix = "Beta 1"
+            versionNameSuffix = "1.5"
         }
     }
     compileOptions {
@@ -42,7 +42,10 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+    //PDF Viewer
     implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 
+    //Google play auto update
+    implementation("com.google.android.play:app-update:2.1.0")
 
 }

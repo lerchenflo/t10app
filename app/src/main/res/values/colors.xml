@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Dark Theme Colors -->
+    <!-- Primary colors -->
+    <color name="dark_primary">#BB86FC</color>
+    <color name="dark_primary_container">#3700B3</color>
+    <color name="dark_on_primary">#000000</color>
+
+    <!-- Secondary colors -->
+    <color name="dark_secondary">#03DAC6</color>
+    <color name="dark_secondary_container">#018786</color>
+    <color name="dark_on_secondary">#000000</color>
+
+    <!-- Background and surface colors -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#121212</color>
+    <color name="dark_on_surface">#FFFFFF</color>
+
+    <!-- Text colors -->
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#BBBBBB</color>
+
+    <!-- System UI colors -->
+    <color name="dark_status_bar">#121212</color>
+    <color name="dark_navigation_bar">#121212</color>
 </resources>
