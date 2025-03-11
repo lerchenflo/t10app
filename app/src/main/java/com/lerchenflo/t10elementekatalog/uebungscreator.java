@@ -1,5 +1,6 @@
 package com.lerchenflo.t10elementekatalog;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
@@ -37,6 +38,13 @@ public class uebungscreator extends AppCompatActivity {
         elementList.setAdapter(adapter);
 
         setupDragAndDrop();
+        // Back button: returns to MainActivity.
+        findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
+
+        //findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> {
+        //    Intent i = new Intent(uebungscreator.this, MainActivity.class);
+        //    startActivity(i);
+        //});
     }
 
     private List<String> loadElements() {
