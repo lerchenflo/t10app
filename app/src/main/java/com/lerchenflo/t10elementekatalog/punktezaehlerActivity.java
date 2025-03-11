@@ -11,36 +11,28 @@ import static com.lerchenflo.t10elementekatalog.constants.Tiefreck;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class punktezaehlerActivity extends AppCompatActivity {
 
     private Button[] buttons = new Button[10];
-    // New arrays with "ODER" options
 
-
-
-
-    // Combine arrays into one array of arrays.
-    private String[][] buttonTextArrays = { Boden, Barren, Balken, Pferd, Ringe, Tiefreck, Hochreck, Stufenbarren};
+    // Updated to 3D array: each element (e.g., Boden) is a 2D array, where each sub-array holds one or more texts.
+    private String[][][] buttonTextArrays = { Boden, Barren, Balken, Pferd, Ringe, Tiefreck, Hochreck, Stufenbarren };
 
     // Spinner options corresponding to the arrays.
     private String[] spinnerItems = {"Boden", "Barren", "Balken", "Pferd", "Ringe", "Tiefreck", "Hochreck", "Stufenbarren"};
 
     // Default color matching the XML background tint (#CCCCCC)
     private final int defaultColor = Color.parseColor("#CCCCCC");
-
 
     // Counter for the number of selected buttons
     private int selectedCount = 0;
@@ -63,12 +55,13 @@ public class punktezaehlerActivity extends AppCompatActivity {
         updateCounter();
 
         // Initialize buttons: assign from XML, set default texts, and attach listeners.
+        // Here we use the first array (Boden) by default.
         for (int i = 0; i < 10; i++) {
             int resID = getResources().getIdentifier("button" + (i + 1), "id", getPackageName());
             buttons[i] = findViewById(resID);
-            // Initially use the first array (Boden)
             if (i < Boden.length) {
-                buttons[i].setText(Boden[i]);
+                // Join the texts in each sub-array with " ODER " and set it as the button text.
+                buttons[i].setText(joinWithOder(Boden[i]));
                 buttons[i].setEnabled(true);
             } else {
                 buttons[i].setText("");
@@ -103,19 +96,21 @@ public class punktezaehlerActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String[] selectedArray = buttonTextArrays[position];
+                // Now each element in buttonTextArrays is a 2D array of texts.
+                String[][] selectedArray = buttonTextArrays[position];
                 // Reset counter since we're changing the set.
                 selectedCount = 0;
                 updateCounter();
                 for (int i = 0; i < 10; i++) {
                     if (i < selectedArray.length) {
-                        buttons[i].setText(selectedArray[i]);
+                        // Join the alternatives with " ODER " for each button.
+                        buttons[i].setText(joinWithOder(selectedArray[i]));
                         buttons[i].setEnabled(true);
                     } else {
                         buttons[i].setText("");
                         buttons[i].setEnabled(false);
                     }
-                    // Also reset the background and selection tag.
+                    // Reset the background and selection tag.
                     buttons[i].setBackgroundColor(defaultColor);
                     buttons[i].setTag(false);
                 }
@@ -132,15 +127,30 @@ public class punktezaehlerActivity extends AppCompatActivity {
             updateCounter();
         });
 
-        //Backbutton
-        findViewById(R.id.backbutton_punktecounter).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(punktezaehlerActivity.this, MainActivity.class);
-                startActivity(i);
-            }
+        // Back button: returns to MainActivity.
+        findViewById(R.id.backbutton_punktecounter).setOnClickListener(v -> {
+            Intent i = new Intent(punktezaehlerActivity.this, MainActivity.class);
+            startActivity(i);
         });
 
+        findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                
+            }
+        });
+    }
+
+    // Helper method to join an array of strings with " ODER " as separator.
+    private String joinWithOder(String[] texts) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < texts.length; i++) {
+            sb.append(texts[i]);
+            if (i < texts.length - 1) {
+                sb.append(" ODER ");
+            }
+        }
+        return sb.toString();
     }
 
     // Method to update the counter TextView.
