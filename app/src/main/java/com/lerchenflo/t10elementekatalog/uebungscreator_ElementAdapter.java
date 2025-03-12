@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHolder> {
+public class uebungscreator_ElementAdapter extends RecyclerView.Adapter<uebungscreator_ElementAdapter.ViewHolder> {
 
     private List<String> elements;
     private Context context;
     private List<String> disabledElements = new ArrayList<>();
 
-    public ElementAdapter(List<String> elements, Context context) {
+    public uebungscreator_ElementAdapter(List<String> elements, Context context) {
         this.elements = elements;
         this.context = context;
     }

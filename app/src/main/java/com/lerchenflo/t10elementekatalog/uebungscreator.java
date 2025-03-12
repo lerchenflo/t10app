@@ -24,7 +24,7 @@ public class uebungscreator extends AppCompatActivity {
     private RecyclerView elementList;
     private LinearLayout dropZone;
     private Spinner categorySpinner;
-    private ElementAdapter adapter;
+    private uebungscreator_ElementAdapter adapter;
     private List<String> elements;
     private HashMap<String, String[][]> elementData = new HashMap<>();
     private String selectedCategory = "Boden"; // Default category
@@ -58,11 +58,11 @@ public class uebungscreator extends AppCompatActivity {
         setupCategorySpinner();
         loadElements(selectedCategory);
 
-        adapter = new ElementAdapter(elements, this);
+        adapter = new uebungscreator_ElementAdapter(elements, this);
         elementList.setLayoutManager(new LinearLayoutManager(this));
         elementList.setAdapter(adapter);
 
-        elementList.addItemDecoration(new RightDividerItemDecoration(
+        elementList.addItemDecoration(new uebungscreator_RightDividerItemDecoration(
                 this,
                 getResources().getColor(android.R.color.darker_gray),
                 2, 20
