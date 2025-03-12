@@ -166,7 +166,7 @@ public class uebungscreator extends AppCompatActivity {
         separator.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 2
         ));
-
+        separator.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         dropZone.addView(textView);
         dropZone.addView(separator);
 
