@@ -84,6 +84,7 @@ public class uebungscreator extends AppCompatActivity {
 
                 // Clear the right panel before updating
                 clearRightPanel();
+                adapter.resetDisabledElements();
 
                 // Update the RecyclerView with the new elements
                 adapter.updateElements(elements);

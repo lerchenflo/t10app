@@ -97,6 +97,10 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHold
         }
         notifyDataSetChanged(); // Refresh the UI
     }
+    public void resetDisabledElements() {
+        disabledElements.clear();
+        notifyDataSetChanged(); // Refresh the RecyclerView
+    }
 
 }
 
