@@ -41,10 +41,6 @@ public class uebungscreator extends AppCompatActivity {
         // Back button: returns to MainActivity.
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
 
-        //findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> {
-        //    Intent i = new Intent(uebungscreator.this, MainActivity.class);
-        //    startActivity(i);
-        //});
     }
 
     private List<String> loadElements() {
@@ -85,9 +81,12 @@ public class uebungscreator extends AppCompatActivity {
 
     private boolean isElementInDropZone(String element) {
         for (int i = 0; i < dropZone.getChildCount(); i++) {
-            TextView child = (TextView) dropZone.getChildAt(i);
-            if (child.getText().toString().equals(element)) {
-                return true;
+            View child = dropZone.getChildAt(i);
+            if (child instanceof TextView) { // Check if it's a TextView before casting
+                TextView textView = (TextView) child;
+                if (textView.getText().toString().equals(element)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -97,8 +96,24 @@ public class uebungscreator extends AppCompatActivity {
         TextView textView = new TextView(this);
         textView.setText(element);
         textView.setPadding(10, 10, 10, 10);
+
+        View separator = new View(this);
+        separator.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, // Full width
+                2 // Height of the separator (adjust as needed)
+        ));
+        separator.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+
         dropZone.addView(textView);
+        dropZone.addView(separator);
     }
+
+    //private void addElementToDropZone(String element) {
+    //    TextView textView = new TextView(this);
+    //    textView.setText(element);
+    //    textView.setPadding(10, 10, 10, 10);
+    //    dropZone.addView(textView);
+    //}
 
     private void disableAlternativeElements(String selected) {
         String[] group = elementGroups.get(selected);
