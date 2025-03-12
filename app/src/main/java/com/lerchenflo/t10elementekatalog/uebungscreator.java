@@ -28,6 +28,7 @@ public class uebungscreator extends AppCompatActivity {
     private List<String> elements;
     private HashMap<String, String[][]> elementData = new HashMap<>();
     private String selectedCategory = "Boden"; // Default category
+    private int draggedIndex = -1; // Track the index of the dragged element
 
     private Set<String> addedGroups = new HashSet<>(); // To track groups already added to the drop zone
 
@@ -107,19 +108,45 @@ public class uebungscreator extends AppCompatActivity {
     }
 
     private void setupDragAndDrop() {
+        // Handle drops in the drop zone
         dropZone.setOnDragListener((v, event) -> {
             switch (event.getAction()) {
-                case DragEvent.ACTION_DROP:
+                case DragEvent.ACTION_DRAG_STARTED:
+                    // Store the original index when dragging starts
                     View draggedView = (View) event.getLocalState();
+                    if (draggedView.getParent() == dropZone) {
+                        draggedIndex = dropZone.indexOfChild(draggedView);
+                    }
+                    return true;
+
+                case DragEvent.ACTION_DROP:
+                    draggedView = (View) event.getLocalState();
                     String element = ((TextView) draggedView).getText().toString();
 
-                    // Check if the element's group is already added to the drop zone
-                    String group = getGroupForElement(element);
-                    if (!addedGroups.contains(group) && !isElementInDropZone(element)) {
-                        addElementToDropZone(element, group);
-                        disableAlternativeElements(element);
+                    if (draggedView.getParent() == dropZone) {
+                        // REORDERING: Move existing element within drop zone
+                        int insertIndex = findInsertIndex(event.getY());
+
+                        // Remove the dragged element and its separator
+                        dropZone.removeViewAt(draggedIndex);
+                        dropZone.removeViewAt(draggedIndex); // Remove separator
+
+                        // Adjust insert index if moving downward
+                        if (draggedIndex < insertIndex) insertIndex -= 2;
+
+                        // Insert at new position
+                        dropZone.addView(draggedView, insertIndex);
+                        View newSeparator = createSeparator();
+                        dropZone.addView(newSeparator, insertIndex + 1);
+                    } else {
+                        // ADDING: New element from the left panel
+                        String group = getGroupForElement(element);
+                        if (!addedGroups.contains(group) && !isElementInDropZone(element)) {
+                            addElementToDropZone(element, group);
+                            disableAlternativeElements(element);
+                        }
                     }
-                    break;
+                    return true;
             }
             return true;
         });
@@ -149,29 +176,30 @@ public class uebungscreator extends AppCompatActivity {
         return false;
     }
 
+    private View createSeparator() {
+        View separator = new View(this);
+        separator.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 2
+        ));
+        separator.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        return separator;
+    }
+
     private void addElementToDropZone(String element, String group) {
         TextView textView = new TextView(this);
         textView.setText(element);
         textView.setPadding(10, 10, 10, 10);
 
-        // Set the drag listener for the TextView (element in the drop zone)
+        // Enable drag for reordering
         textView.setOnLongClickListener(v -> {
-            // Start the drag operation
             ClipData data = ClipData.newPlainText("element", element);
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
             v.startDragAndDrop(data, shadowBuilder, v, 0);
             return true;
         });
 
-        View separator = new View(this);
-        separator.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 2
-        ));
-        separator.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         dropZone.addView(textView);
-        dropZone.addView(separator);
-
-        // Mark the group as added
+        dropZone.addView(createSeparator());
         addedGroups.add(group);
     }
 
@@ -223,22 +251,19 @@ public class uebungscreator extends AppCompatActivity {
 
 
     private void removeElementFromDropZone(String element) {
-        // Remove the element and its separator from the drop zone
         for (int i = 0; i < dropZone.getChildCount(); i++) {
             View child = dropZone.getChildAt(i);
             if (child instanceof TextView && ((TextView) child).getText().toString().equals(element)) {
-                dropZone.removeViewAt(i); // Remove element
-                dropZone.removeViewAt(i); // Remove separator
+                // Remove element and separator
+                dropZone.removeViewAt(i);
+                dropZone.removeViewAt(i);
                 break;
             }
         }
 
-        // Remove the group identifier from addedGroups
         String groupIdentifier = getGroupForElement(element);
         addedGroups.remove(groupIdentifier);
-
-        // Re-enable all elements in this group
-        enableElementsInGroup(element); // <-- New method
+        enableElementsInGroup(element);
     }
     private void enableElementsInGroup(String element) {
         // Get groups for the current category
@@ -254,5 +279,15 @@ public class uebungscreator extends AppCompatActivity {
                 }
             }
         }
+    }
+    // Helper method to find the index where to insert the dragged element
+    private int findInsertIndex(float y) {
+        for (int i = 0; i < dropZone.getChildCount(); i++) {
+            View child = dropZone.getChildAt(i);
+            if (child instanceof TextView && y < child.getY() + child.getHeight() / 2) {
+                return i; // Insert above this element
+            }
+        }
+        return dropZone.getChildCount(); // Insert at the end
     }
 }
