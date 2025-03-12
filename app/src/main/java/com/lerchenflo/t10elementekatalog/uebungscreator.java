@@ -174,19 +174,28 @@ public class uebungscreator extends AppCompatActivity {
         addedGroups.add(group);
     }
 
-    private void disableAlternativeElements(String selected) {
-        // Get the groups for the selected category
-        String[][] groups = elementData.get(selected);
+    private void disableAlternativeElements(String selectedElement) {
+        // Get the groups for the current category
+        String[][] groups = elementData.get(selectedCategory);
         if (groups != null) {
-            // Flatten the groups into a single list of elements
-            List<String> allElementsInGroup = new ArrayList<>();
+            // Find the group that contains the selectedElement
+            List<String> elementsToDisable = new ArrayList<>();
             for (String[] group : groups) {
                 for (String item : group) {
-                    allElementsInGroup.add(item);
+                    if (item.equals(selectedElement)) {
+                        // Found the group, add all elements in this group
+                        for (String element : group) {
+                            elementsToDisable.add(element);
+                        }
+                        break;
+                    }
+                }
+                if (!elementsToDisable.isEmpty()) {
+                    break; // Exit loop once the group is found
                 }
             }
-            // Disable all elements in the group
-            adapter.disableElements(allElementsInGroup.toArray(new String[0]));
+            // Disable all elements in the found group
+            adapter.disableElements(elementsToDisable.toArray(new String[0]));
         }
     }
 
