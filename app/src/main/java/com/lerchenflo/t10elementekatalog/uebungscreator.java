@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import com.lerchenflo.t10elementekatalog.RightDividerItemDecoration;
 
 public class uebungscreator extends AppCompatActivity {
 
@@ -37,11 +38,19 @@ public class uebungscreator extends AppCompatActivity {
         elementList.setLayoutManager(new LinearLayoutManager(this));
         elementList.setAdapter(adapter);
 
-        setupDragAndDrop();
-        // Back button: returns to MainActivity.
-        findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
+        // Add the vertical line to the right of the RecyclerView
+        elementList.addItemDecoration(new RightDividerItemDecoration(
+                this,
+                getResources().getColor(android.R.color.darker_gray), // Line color
+                4,  // Line width in pixels
+                10  // Margin from top and bottom
+        ));
 
+        setupDragAndDrop();
+
+        findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
     }
+
 
     private List<String> loadElements() {
         List<String> allElements = new ArrayList<>();
@@ -107,13 +116,6 @@ public class uebungscreator extends AppCompatActivity {
         dropZone.addView(textView);
         dropZone.addView(separator);
     }
-
-    //private void addElementToDropZone(String element) {
-    //    TextView textView = new TextView(this);
-    //    textView.setText(element);
-    //    textView.setPadding(10, 10, 10, 10);
-    //    dropZone.addView(textView);
-    //}
 
     private void disableAlternativeElements(String selected) {
         String[] group = elementGroups.get(selected);
