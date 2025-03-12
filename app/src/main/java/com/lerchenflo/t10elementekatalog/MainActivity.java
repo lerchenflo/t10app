@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         MenuItem uebungmenu = menuBuilder.add(1, 20, 0, "Übungsassistent(Basis)");
         parentItem.setCheckable(true);
 
-
         MenuItem bugreportmenu = menuBuilder.add(2, 30, 0, "Fehler melden / Vorschläge");
         parentItem.setCheckable(true);
 

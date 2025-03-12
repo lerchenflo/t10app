@@ -49,6 +49,11 @@ dependencies {
 
     //Google play auto update
     implementation("com.google.android.play:app-update:2.1.0")
-    annotationProcessor(libs.room.compiler)
+
+    //GSON zum speichern
+    implementation("com.google.code.gson:gson:2.10.1")
+
+
+
 
 }
