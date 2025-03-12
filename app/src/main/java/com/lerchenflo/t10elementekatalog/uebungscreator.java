@@ -1,4 +1,5 @@
 package com.lerchenflo.t10elementekatalog;
+import android.content.ClipData;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
@@ -152,6 +153,15 @@ public class uebungscreator extends AppCompatActivity {
         textView.setText(element);
         textView.setPadding(10, 10, 10, 10);
 
+        // Set the drag listener for the TextView (element in the drop zone)
+        textView.setOnLongClickListener(v -> {
+            // Start the drag operation
+            ClipData data = ClipData.newPlainText("element", element);
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+            v.startDragAndDrop(data, shadowBuilder, v, 0);
+            return true;
+        });
+
         View separator = new View(this);
         separator.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 2
@@ -191,21 +201,24 @@ public class uebungscreator extends AppCompatActivity {
                     View draggedView = (View) event.getLocalState();
                     String element = ((TextView) draggedView).getText().toString();
 
-                    // Remove the element from the drop zone
-                    removeElementFromDropZone(element);
+                    // Only remove elements from the drop zone (right panel)
+                    if (draggedView.getParent() == dropZone) {
+                        removeElementFromDropZone(element);
+                    }
                     break;
             }
             return true;
         });
     }
 
+
     private void removeElementFromDropZone(String element) {
         // Iterate through the drop zone to find and remove the element
         for (int i = 0; i < dropZone.getChildCount(); i++) {
             View child = dropZone.getChildAt(i);
             if (child instanceof TextView && ((TextView) child).getText().toString().equals(element)) {
-                dropZone.removeViewAt(i);
-                dropZone.removeViewAt(i); // Remove the separator too
+                dropZone.removeViewAt(i); // Remove element
+                dropZone.removeViewAt(i); // Remove separator as well
                 break;
             }
         }
