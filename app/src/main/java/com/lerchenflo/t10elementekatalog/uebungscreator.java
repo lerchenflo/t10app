@@ -36,7 +36,10 @@ public class uebungscreator extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uebungscreator);
-
+        findViewById(R.id.clear).setOnClickListener(v -> {
+            clearRightPanel();
+            adapter.resetDisabledElements();
+        });
         elementList = findViewById(R.id.recyclerView);
         dropZone = findViewById(R.id.dropZone);
         categorySpinner = findViewById(R.id.categorySpinner);
