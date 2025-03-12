@@ -51,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        //DB init
-        AppDatabase.getInstance(this);
 
         pdfView = findViewById(R.id.pdfView);  // Set up the PDFView
         drawerLayout = findViewById(R.id.drawer_layout);
