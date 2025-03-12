@@ -87,7 +87,11 @@ public class MainActivity extends AppCompatActivity {
         MenuItem countermenu = menuBuilder.add(1, 10, 0, "Punktezähler(A)(Basis)");
         parentItem.setCheckable(true);
 
-        MenuItem bugreportmenu = menuBuilder.add(2, 20, 0, "Fehler melden / Vorschläge");
+        MenuItem uebungmenu = menuBuilder.add(1, 20, 0, "Übungsassistent(Basis)");
+        parentItem.setCheckable(true);
+
+
+        MenuItem bugreportmenu = menuBuilder.add(2, 30, 0, "Fehler melden / Vorschläge");
         parentItem.setCheckable(true);
 
 
@@ -154,8 +158,11 @@ public class MainActivity extends AppCompatActivity {
                     Intent i = new Intent(MainActivity.this, punktezaehlerActivity.class);
                     startActivity(i);
                     break;
-
-                case 20: //Bugreport
+                case 20: //Übungsassistent
+                    Intent j = new Intent(MainActivity.this, uebungscreator.class);
+                    startActivity(j);
+                    break;
+                case 30: //Bugreport
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Auswählen:")
                             .setItems(new String[]{"Bug Report", "Feature Request", "Schließen"}, new DialogInterface.OnClickListener() {
