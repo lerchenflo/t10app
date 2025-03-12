@@ -1,5 +1,4 @@
 package com.lerchenflo.t10elementekatalog;
-
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
@@ -15,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class uebungscreator extends AppCompatActivity {
 
@@ -26,6 +27,8 @@ public class uebungscreator extends AppCompatActivity {
     private List<String> elements;
     private HashMap<String, String[][]> elementData = new HashMap<>();
     private String selectedCategory = "Boden"; // Default category
+
+    private Set<String> addedGroups = new HashSet<>(); // To track groups already added to the drop zone
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,11 @@ public class uebungscreator extends AppCompatActivity {
         // Initialize category data
         elementData.put("Boden", constants.Boden);
         elementData.put("Barren", constants.Barren);
+        elementData.put("Balken", constants.Balken);
+        elementData.put("Pferd", constants.Pferd);
+        elementData.put("Sufenbarren", constants.Stufenbarren);
+        elementData.put("Hochreck", constants.Hochreck);
+        elementData.put("Tiefreck", constants.Tiefreck);
         elementData.put("Ringe", constants.Ringe);
 
         setupCategorySpinner();
@@ -83,7 +91,6 @@ public class uebungscreator extends AppCompatActivity {
         });
     }
 
-
     private void loadElements(String category) {
         elements = new ArrayList<>();
         if (elementData.containsKey(category)) {
@@ -102,15 +109,30 @@ public class uebungscreator extends AppCompatActivity {
                     View draggedView = (View) event.getLocalState();
                     String element = ((TextView) draggedView).getText().toString();
 
-                    if (!isElementInDropZone(element)) {
-                        addElementToDropZone(element);
+                    // Check if the element's group is already added to the drop zone
+                    String group = getGroupForElement(element);
+                    if (!addedGroups.contains(group) && !isElementInDropZone(element)) {
+                        addElementToDropZone(element, group);
                         disableAlternativeElements(element);
                     }
                     break;
-
             }
             return true;
         });
+    }
+
+    private String getGroupForElement(String element) {
+        // Loop through all groups to find the group that contains the element
+        for (String[][] groupArray : elementData.values()) {
+            for (String[] group : groupArray) {
+                for (String item : group) {
+                    if (item.equals(element)) {
+                        return String.join(", ", group); // Return the entire group as a string identifier
+                    }
+                }
+            }
+        }
+        return ""; // Default case, shouldn't reach here
     }
 
     private boolean isElementInDropZone(String element) {
@@ -123,7 +145,7 @@ public class uebungscreator extends AppCompatActivity {
         return false;
     }
 
-    private void addElementToDropZone(String element) {
+    private void addElementToDropZone(String element, String group) {
         TextView textView = new TextView(this);
         textView.setText(element);
         textView.setPadding(10, 10, 10, 10);
@@ -132,11 +154,14 @@ public class uebungscreator extends AppCompatActivity {
         separator.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 2
         ));
-        //separator.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
 
         dropZone.addView(textView);
         dropZone.addView(separator);
+
+        // Mark the group as added
+        addedGroups.add(group);
     }
+
     private void disableAlternativeElements(String selected) {
         // Get the groups for the selected category
         String[][] groups = elementData.get(selected);
@@ -152,8 +177,9 @@ public class uebungscreator extends AppCompatActivity {
             adapter.disableElements(allElementsInGroup.toArray(new String[0]));
         }
     }
+
     private void clearRightPanel() {
         dropZone.removeAllViews(); // Remove all child views from the dropZone (right panel)
+        addedGroups.clear(); // Clear the list of added groups
     }
-
 }
