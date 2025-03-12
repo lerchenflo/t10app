@@ -74,4 +74,11 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHold
             textView = (TextView) itemView;
         }
     }
+    public void updateElements(List<String> newElements) {
+        this.elements.clear();
+        this.elements.addAll(newElements);
+        notifyDataSetChanged(); // Refresh RecyclerView
+    }
 }
+
+

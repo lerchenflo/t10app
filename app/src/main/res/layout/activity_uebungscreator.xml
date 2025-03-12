@@ -22,6 +22,16 @@
         android:focusable="true"/>
 
     <!-- Horizontal Divider -->
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginStart="61dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/view"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -43,12 +53,13 @@
 
     <!-- Vertical Divider -->
     <View
+        android:id="@+id/view"
         android:layout_width="2dp"
         android:layout_height="match_parent"
         android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/recyclerView"
-        app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator" />
 
     <!-- Drop Zone for selected elements -->
     <LinearLayout

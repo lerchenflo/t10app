@@ -1,10 +1,12 @@
 package com.lerchenflo.t10elementekatalog;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,15 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import com.lerchenflo.t10elementekatalog.RightDividerItemDecoration;
 
 public class uebungscreator extends AppCompatActivity {
 
     private RecyclerView elementList;
     private LinearLayout dropZone;
+    private Spinner categorySpinner;
     private ElementAdapter adapter;
     private List<String> elements;
-    private HashMap<String, String[]> elementGroups = new HashMap<>();
+    private HashMap<String, String[][]> elementData = new HashMap<>();
+    private String selectedCategory = "Boden"; // Default category
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +34,24 @@ public class uebungscreator extends AppCompatActivity {
 
         elementList = findViewById(R.id.recyclerView);
         dropZone = findViewById(R.id.dropZone);
+        categorySpinner = findViewById(R.id.categorySpinner);
 
-        elements = loadElements();
+        // Initialize category data
+        elementData.put("Boden", constants.Boden);
+        elementData.put("Barren", constants.Barren);
+        elementData.put("Ringe", constants.Ringe);
+
+        setupCategorySpinner();
+        loadElements(selectedCategory);
+
         adapter = new ElementAdapter(elements, this);
-
         elementList.setLayoutManager(new LinearLayoutManager(this));
         elementList.setAdapter(adapter);
 
-        // Add the vertical line to the right of the RecyclerView
         elementList.addItemDecoration(new RightDividerItemDecoration(
                 this,
-                getResources().getColor(android.R.color.darker_gray), // Line color
-                4,  // Line width in pixels
-                10  // Margin from top and bottom
+                getResources().getColor(android.R.color.darker_gray),
+                2, 20
         ));
 
         setupDragAndDrop();
@@ -51,22 +59,32 @@ public class uebungscreator extends AppCompatActivity {
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
     }
 
+    private void setupCategorySpinner() {
+        List<String> categories = new ArrayList<>(elementData.keySet());
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(spinnerAdapter);
 
-    private List<String> loadElements() {
-        List<String> allElements = new ArrayList<>();
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedCategory = categories.get(position);
+                loadElements(selectedCategory);
+                adapter.updateElements(elements); // Update the RecyclerView
+            }
 
-        addElementsFromArray("Boden", constants.Boden, allElements);
-        addElementsFromArray("Barren", constants.Barren, allElements);
-        addElementsFromArray("Ringe", constants.Ringe, allElements);
-
-        return allElements;
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 
-    private void addElementsFromArray(String category, String[][] array, List<String> list) {
-        for (String[] group : array) {
-            for (String item : group) {
-                list.add(item);
-                elementGroups.put(item, group);
+    private void loadElements(String category) {
+        elements = new ArrayList<>();
+        if (elementData.containsKey(category)) {
+            for (String[] group : elementData.get(category)) {
+                for (String item : group) {
+                    elements.add(item);
+                }
             }
         }
     }
@@ -83,6 +101,7 @@ public class uebungscreator extends AppCompatActivity {
                         disableAlternativeElements(element);
                     }
                     break;
+
             }
             return true;
         });
@@ -91,11 +110,8 @@ public class uebungscreator extends AppCompatActivity {
     private boolean isElementInDropZone(String element) {
         for (int i = 0; i < dropZone.getChildCount(); i++) {
             View child = dropZone.getChildAt(i);
-            if (child instanceof TextView) { // Check if it's a TextView before casting
-                TextView textView = (TextView) child;
-                if (textView.getText().toString().equals(element)) {
-                    return true;
-                }
+            if (child instanceof TextView && ((TextView) child).getText().toString().equals(element)) {
+                return true;
             }
         }
         return false;
@@ -108,19 +124,26 @@ public class uebungscreator extends AppCompatActivity {
 
         View separator = new View(this);
         separator.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, // Full width
-                2 // Height of the separator (adjust as needed)
+                LinearLayout.LayoutParams.MATCH_PARENT, 2
         ));
-        separator.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        //separator.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
 
         dropZone.addView(textView);
         dropZone.addView(separator);
     }
-
     private void disableAlternativeElements(String selected) {
-        String[] group = elementGroups.get(selected);
-        if (group != null) {
-            adapter.disableElements(group);
+        // Get the groups for the selected category
+        String[][] groups = elementData.get(selected);
+        if (groups != null) {
+            // Flatten the groups into a single list of elements
+            List<String> allElementsInGroup = new ArrayList<>();
+            for (String[] group : groups) {
+                for (String item : group) {
+                    allElementsInGroup.add(item);
+                }
+            }
+            // Disable all elements in the group
+            adapter.disableElements(allElementsInGroup.toArray(new String[0]));
         }
     }
 }
