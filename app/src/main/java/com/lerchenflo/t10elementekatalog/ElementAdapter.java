@@ -35,14 +35,26 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHold
         String element = elements.get(position);
         holder.textView.setText(element);
 
+        // If the element is disabled, apply a semi-transparent background
         if (disabledElements.contains(element)) {
-            holder.textView.setAlpha(0.5f); // Grey out disabled elements
-            holder.textView.setEnabled(false);
+            // Set a semi-transparent background to grey out the element
+            holder.textView.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
+
+            // Make the element semi-transparent and disabled
+            holder.textView.setAlpha(0.5f); // Apply opacity (you can adjust the value)
+            holder.textView.setEnabled(false); // Disable interactions
         } else {
-            holder.textView.setAlpha(1.0f);
+            // Set default background (transparent or a clear background)
+            holder.textView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+
+            // Make the element fully interactive
             holder.textView.setEnabled(true);
+
+            // Optional: Restore full opacity if needed (default behavior)
+            holder.textView.setAlpha(1.0f);
         }
 
+        // Handle the drag-and-drop functionality
         holder.textView.setOnLongClickListener(v -> {
             if (!disabledElements.contains(element)) {
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
@@ -79,6 +91,7 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHold
         this.elements.addAll(newElements);
         notifyDataSetChanged(); // Refresh RecyclerView
     }
+
 }
 
 

@@ -70,13 +70,19 @@ public class uebungscreator extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedCategory = categories.get(position);
                 loadElements(selectedCategory);
-                adapter.updateElements(elements); // Update the RecyclerView
+
+                // Clear the right panel before updating
+                clearRightPanel();
+
+                // Update the RecyclerView with the new elements
+                adapter.updateElements(elements);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
+
 
     private void loadElements(String category) {
         elements = new ArrayList<>();
@@ -146,4 +152,8 @@ public class uebungscreator extends AppCompatActivity {
             adapter.disableElements(allElementsInGroup.toArray(new String[0]));
         }
     }
+    private void clearRightPanel() {
+        dropZone.removeAllViews(); // Remove all child views from the dropZone (right panel)
+    }
+
 }
