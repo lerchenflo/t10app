@@ -222,18 +222,36 @@ public class uebungscreator extends AppCompatActivity {
 
 
     private void removeElementFromDropZone(String element) {
-        // Iterate through the drop zone to find and remove the element
+        // Remove the element and its separator from the drop zone
         for (int i = 0; i < dropZone.getChildCount(); i++) {
             View child = dropZone.getChildAt(i);
             if (child instanceof TextView && ((TextView) child).getText().toString().equals(element)) {
                 dropZone.removeViewAt(i); // Remove element
-                dropZone.removeViewAt(i); // Remove separator as well
+                dropZone.removeViewAt(i); // Remove separator
                 break;
             }
         }
 
-        // Remove the group from the "addedGroups" set so it can be added back later
-        String group = getGroupForElement(element);
-        addedGroups.remove(group);
+        // Remove the group identifier from addedGroups
+        String groupIdentifier = getGroupForElement(element);
+        addedGroups.remove(groupIdentifier);
+
+        // Re-enable all elements in this group
+        enableElementsInGroup(element); // <-- New method
+    }
+    private void enableElementsInGroup(String element) {
+        // Get groups for the current category
+        String[][] groups = elementData.get(selectedCategory);
+        if (groups != null) {
+            for (String[] group : groups) {
+                for (String item : group) {
+                    if (item.equals(element)) {
+                        // Found the group: Enable all elements in it
+                        adapter.enableElements(group);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

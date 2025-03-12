@@ -91,6 +91,12 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHold
         this.elements.addAll(newElements);
         notifyDataSetChanged(); // Refresh RecyclerView
     }
+    public void enableElements(String[] elementsToEnable) {
+        for (String element : elementsToEnable) {
+            disabledElements.remove(element); // Remove from disabled set
+        }
+        notifyDataSetChanged(); // Refresh the UI
+    }
 
 }
 
