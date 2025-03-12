@@ -38,6 +38,7 @@ public class uebungscreator extends AppCompatActivity {
         elementList = findViewById(R.id.recyclerView);
         dropZone = findViewById(R.id.dropZone);
         categorySpinner = findViewById(R.id.categorySpinner);
+        View trashcan = findViewById(R.id.trashcan); // Add trashcan view
 
         // Initialize category data
         elementData.put("Boden", constants.Boden);
@@ -63,6 +64,7 @@ public class uebungscreator extends AppCompatActivity {
         ));
 
         setupDragAndDrop();
+        setupTrashcan(trashcan); // Setup the trashcan drop behavior
 
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
     }
@@ -181,5 +183,35 @@ public class uebungscreator extends AppCompatActivity {
     private void clearRightPanel() {
         dropZone.removeAllViews(); // Remove all child views from the dropZone (right panel)
         addedGroups.clear(); // Clear the list of added groups
+    }
+    private void setupTrashcan(View trashcan) {
+        trashcan.setOnDragListener((v, event) -> {
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DROP:
+                    View draggedView = (View) event.getLocalState();
+                    String element = ((TextView) draggedView).getText().toString();
+
+                    // Remove the element from the drop zone
+                    removeElementFromDropZone(element);
+                    break;
+            }
+            return true;
+        });
+    }
+
+    private void removeElementFromDropZone(String element) {
+        // Iterate through the drop zone to find and remove the element
+        for (int i = 0; i < dropZone.getChildCount(); i++) {
+            View child = dropZone.getChildAt(i);
+            if (child instanceof TextView && ((TextView) child).getText().toString().equals(element)) {
+                dropZone.removeViewAt(i);
+                dropZone.removeViewAt(i); // Remove the separator too
+                break;
+            }
+        }
+
+        // Remove the group from the "addedGroups" set so it can be added back later
+        String group = getGroupForElement(element);
+        addedGroups.remove(group);
     }
 }
