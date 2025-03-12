@@ -9,13 +9,13 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RightDividerItemDecoration extends RecyclerView.ItemDecoration {
+public class uebungscreator_RightDividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private final Paint paint;
     private final int dividerHeight;
     private final int margin;
 
-    public RightDividerItemDecoration(Context context, int color, int height, int margin) {
+    public uebungscreator_RightDividerItemDecoration(Context context, int color, int height, int margin) {
         paint = new Paint();
         paint.setColor(color);
         paint.setStrokeWidth(height);

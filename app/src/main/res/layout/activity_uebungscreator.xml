@@ -9,7 +9,6 @@
     android:padding="15dp"
     tools:context=".uebungscreator">
 
-
     <!-- Return Button -->
     <ImageButton
         android:id="@+id/backbutton_uebungscreator"
@@ -18,21 +17,19 @@
         android:src="@android:drawable/ic_menu_revert"
         android:background="@null"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:clickable="true"
-        android:focusable="true"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- Horizontal Divider -->
+    <!-- Category Spinner -->
     <Spinner
         android:id="@+id/categorySpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_marginStart="61dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/view"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
+    <!-- Horizontal Divider -->
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -41,7 +38,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- RecyclerView for elements -->
+    <!-- Elements List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
@@ -60,9 +57,9 @@
         android:background="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/recyclerView"
-        app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator" />
+        app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator"/>
 
-    <!-- Drop Zone for selected elements -->
+    <!-- Right Panel (Drop Zone) -->
     <LinearLayout
         android:id="@+id/dropZone"
         android:layout_width="0dp"
@@ -72,29 +69,55 @@
         app:layout_constraintStart_toEndOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toTopOf="@+id/buttonContainer">
 
+        <!-- Dynamic elements will be added here -->
     </LinearLayout>
 
+    <!-- Button Container -->
     <LinearLayout
-        android:id="@+id/trashcan"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-
-        android:background="@android:color/darker_gray"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:id="@+id/buttonContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/view">
-        <!-- Trashcan Icon or Text -->
-        <TextView
-            android:id="@+id/trashcanText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Element löschen"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
+        app:layout_constraintStart_toEndOf="@+id/recyclerView"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Übung löschen (Left Button) -->
+        <LinearLayout
+            android:id="@+id/clear"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/clearText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Übung löschen"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <!-- Element löschen (Right Button) -->
+        <LinearLayout
+            android:id="@+id/trashcan"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/trashcanText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Element löschen"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"/>
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
