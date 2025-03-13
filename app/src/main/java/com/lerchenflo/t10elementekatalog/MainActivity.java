@@ -153,11 +153,11 @@ public class MainActivity extends AppCompatActivity {
                     return true;
 
                 case 10: //Counter
-                    Intent i = new Intent(MainActivity.this, punktezaehlerActivity.class);
+                    Intent i = new Intent(MainActivity.this, com.lerchenflo.t10elementekatalog.punktezaehlerActivity.class);
                     startActivity(i);
                     break;
                 case 20: //Übungsassistent
-                    Intent j = new Intent(MainActivity.this, uebungscreator.class);
+                    Intent j = new Intent(MainActivity.this, com.lerchenflo.t10elementekatalog.uebungscreator.class);
                     startActivity(j);
                     break;
                 case 30: //Bugreport
