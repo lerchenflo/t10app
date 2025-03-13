@@ -20,10 +20,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.github.barteksc.pdfviewer.PDFView;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -153,11 +151,11 @@ public class MainActivity extends AppCompatActivity {
                     return true;
 
                 case 10: //Counter
-                    Intent i = new Intent(MainActivity.this, com.lerchenflo.t10elementekatalog.punktezaehlerActivity.class);
+                    Intent i = new Intent(MainActivity.this, punktezaehlerActivity.class);
                     startActivity(i);
                     break;
                 case 20: //Übungsassistent
-                    Intent j = new Intent(MainActivity.this, com.lerchenflo.t10elementekatalog.uebungscreator.class);
+                    Intent j = new Intent(MainActivity.this, uebungscreator.class);
                     startActivity(j);
                     break;
                 case 30: //Bugreport
@@ -241,9 +239,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-
     private void loadPdf(String assetFileName) {
 
         pdfView.fromAsset(assetFileName)
@@ -256,6 +251,4 @@ public class MainActivity extends AppCompatActivity {
                 .load();
         Log.d("PDF geladen", assetFileName);
     }
-
-
 }
