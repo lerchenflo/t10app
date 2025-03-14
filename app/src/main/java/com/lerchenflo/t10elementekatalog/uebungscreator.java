@@ -1,14 +1,18 @@
 package com.lerchenflo.t10elementekatalog;
 import android.content.ClipData;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,11 +35,56 @@ public class uebungscreator extends AppCompatActivity {
     private int draggedIndex = -1; // Track the index of the dragged element
 
     private Set<String> addedGroups = new HashSet<>(); // To track groups already added to the drop zone
+    private Spinner uebungSpinner;
+    private ArrayAdapter<String> uebungAdapter;
+    private List<String> uebungenList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_uebungscreator);
+
+        // Initialize new views
+        uebungSpinner = findViewById(R.id.uebungSpinner);
+        ImageButton deleteUebungButton = findViewById(R.id.deleteUebungButton);
+
+        // Setup Übung Spinner
+        uebungenList.add("Übung 1");
+        uebungenList.add("Übung hinzufügen");
+
+        //uebungAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, uebungenList);
+        uebungAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, uebungenList);
+
+        uebungAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uebungSpinner.setAdapter(uebungAdapter);
+        Log.d("DEBUG", "uebungenList size: " + uebungenList.size());
+        Log.d("SpinnerDebug", "uebungenList contents: " + uebungenList.toString());
+
+
+        // Übung Spinner selection listener
+        uebungSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = uebungenList.get(position);
+                if (selected.equals("Übung hinzufügen")) {
+                    showAddUebungDialog();
+                    // Reset selection to previous item
+                    uebungSpinner.setSelection(0);
+                } else {
+                    clearRightPanel();
+                    adapter.resetDisabledElements();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Delete Übung Button
+        deleteUebungButton.setOnClickListener(v -> deleteCurrentUebung());
+
+
         findViewById(R.id.clear).setOnClickListener(v -> {
             clearRightPanel();
             adapter.resetDisabledElements();
@@ -73,7 +122,41 @@ public class uebungscreator extends AppCompatActivity {
 
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
     }
+    private void showAddUebungDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Übung hinzufügen");
+        final EditText input = new EditText(this);
+        builder.setView(input);
 
+        builder.setPositiveButton("Hinzufügen", (dialog, which) -> {
+            String newName = input.getText().toString().trim();
+            if (!newName.isEmpty()) {
+                // Insert new Übung before "Übung hinzufügen"
+                uebungenList.add(uebungenList.size() - 1, newName);
+                uebungAdapter.notifyDataSetChanged();
+                clearRightPanel();
+                adapter.resetDisabledElements();
+                uebungSpinner.setSelection(uebungenList.indexOf(newName));
+            }
+        });
+        builder.setNegativeButton("Abbrechen", null);
+        builder.show();
+    }
+
+    private void deleteCurrentUebung() {
+        int position = uebungSpinner.getSelectedItemPosition();
+        String current = uebungenList.get(position);
+
+        if (position == 0 || current.equals("Übung hinzufügen")) {
+            return; // Can't delete default or add button
+        }
+
+        uebungenList.remove(position);
+        uebungAdapter.notifyDataSetChanged();
+        uebungSpinner.setSelection(position > 0 ? position - 1 : 0);
+        clearRightPanel();
+        adapter.resetDisabledElements();
+    }
     private void setupCategorySpinner() {
         List<String> categories = new ArrayList<>(elementData.keySet());
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
