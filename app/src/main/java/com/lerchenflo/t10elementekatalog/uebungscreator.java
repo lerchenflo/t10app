@@ -186,13 +186,27 @@ public class uebungscreator extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    private void updateElementOrderInModel() {
+        Geraet geraet = getCurrentGeraet();
+        geraet._elemente.clear();
+
+        // Read elements from drop zone in current order
+        for(int i = 0; i < dropZone.getChildCount(); i += 2) { // Skip separators
+            View child = dropZone.getChildAt(i);
+            if(child instanceof TextView) {
+                geraet._elemente.add(((TextView) child).getText().toString());
+            }
+        }
+        saveCurrentKind();
+    }
     private void refreshDropZone() {
         clearRightPanel();
         List<String> elements = currentKind.getGeraetElements(selectedCategory);
+        // Add elements in stored order and disable groups
         for (String element : elements) {
             String group = getGroupForElement(element);
             addElementToDropZone(element, group);
-            disableAlternativeElements(element); // Disable group when loading
+            disableAlternativeElements(element);
         }
     }
     private void showAddUebungDialog() {
@@ -305,7 +319,7 @@ public class uebungscreator extends AppCompatActivity {
                         dropZone.addView(draggedView, insertIndex);
                         View newSeparator = createSeparator();
                         dropZone.addView(newSeparator, insertIndex + 1);
-
+                        updateElementOrderInModel();
 
                     } else {
                         // ADDING: New element from the left panel
