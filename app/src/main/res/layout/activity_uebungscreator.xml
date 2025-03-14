@@ -9,32 +9,72 @@
     android:padding="15dp"
     tools:context=".uebungscreator">
 
-    <!-- Return Button -->
-    <ImageButton
-        android:id="@+id/backbutton_uebungscreator"
-        android:layout_width="wrap_content"
+    <!-- Top Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_revert"
-        android:background="@null"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Category Spinner -->
-    <Spinner
-        android:id="@+id/categorySpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/view"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <!-- Back Button -->
+        <ImageButton
+            android:id="@+id/backbutton_uebungscreator"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@null"
+
+            android:src="@android:drawable/ic_menu_revert"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <!-- Übung Container -->
+
+
+            <Spinner
+                android:id="@+id/uebungSpinner"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/backbutton_uebungscreator"
+                app:layout_constraintEnd_toStartOf="@id/deleteUebungButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/deleteUebungButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@null"
+                android:src="@android:drawable/ic_menu_delete"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/categorySpinner"
+                app:layout_constraintStart_toEndOf="@id/uebungSpinner"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/deleteUebungButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <!-- Category Spinner -->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Horizontal Divider -->
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -45,19 +85,19 @@
         android:layout_height="0dp"
         android:layout_margin="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/dropZone"
-        app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintEnd_toStartOf="@id/dropZone"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintBottom_toTopOf="@id/buttonContainer"/>
 
     <!-- Vertical Divider -->
     <View
         android:id="@+id/view"
         android:layout_width="2dp"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/recyclerView"
-        app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator"/>
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintBottom_toTopOf="@id/buttonContainer"
+        app:layout_constraintStart_toEndOf="@id/recyclerView"/>
 
     <!-- Right Panel (Drop Zone) -->
     <LinearLayout
@@ -66,58 +106,50 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintStart_toEndOf="@+id/recyclerView"
+        app:layout_constraintStart_toEndOf="@id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backbutton_uebungscreator"
-        app:layout_constraintBottom_toTopOf="@+id/buttonContainer">
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintBottom_toTopOf="@id/buttonContainer"/>
 
-        <!-- Dynamic elements will be added here -->
-    </LinearLayout>
-
-    <!-- Button Container -->
-    <LinearLayout
+    <!-- Improved Button Container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonContainer"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/recyclerView"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp">
 
-        <!-- Übung löschen (Left Button) -->
-        <LinearLayout
+        <!-- Übung löschen -->
+        <Button
             android:id="@+id/clear"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@android:color/darker_gray"
-            android:gravity="center">
+            android:layout_height="48dp"
+            android:backgroundTint="@android:color/darker_gray"
+            android:text="Übung löschen"
+            android:textColor="#FFFFFF"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/trashcan"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="4dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
-            <TextView
-                android:id="@+id/clearText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Übung löschen"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"/>
-        </LinearLayout>
-
-        <!-- Element löschen (Right Button) -->
-        <LinearLayout
+        <!-- Element löschen -->
+        <Button
             android:id="@+id/trashcan"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@android:color/darker_gray"
-            android:gravity="center">
+            android:layout_height="48dp"
+            android:backgroundTint="@android:color/darker_gray"
+            android:text="Element löschen"
+            android:textColor="#FFFFFF"
+            app:layout_constraintStart_toEndOf="@id/clear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="4dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
-            <TextView
-                android:id="@+id/trashcanText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Element löschen"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"/>
-        </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
