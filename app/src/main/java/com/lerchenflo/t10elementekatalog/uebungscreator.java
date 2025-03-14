@@ -180,6 +180,8 @@ public class uebungscreator extends AppCompatActivity {
                 }
             }
 
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -188,7 +190,9 @@ public class uebungscreator extends AppCompatActivity {
         clearRightPanel();
         List<String> elements = currentKind.getGeraetElements(selectedCategory);
         for (String element : elements) {
-            addElementToDropZone(element, getGroupForElement(element));
+            String group = getGroupForElement(element);
+            addElementToDropZone(element, group);
+            disableAlternativeElements(element); // Disable group when loading
         }
     }
     private void showAddUebungDialog() {

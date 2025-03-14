@@ -14,7 +14,6 @@ public class SaveFileManager {
     public void saveKind(Context context, Kind kind, String Kindname) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (FileWriter writer = new FileWriter(context.getFilesDir() +"/"+ Kindname.replace(" ", "_") + ".creator.kind")) {
-            
             gson.toJson(kind, writer);
         }
     }
