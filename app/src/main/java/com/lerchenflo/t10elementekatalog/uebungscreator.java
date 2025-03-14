@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,28 +40,37 @@ public class uebungscreator extends AppCompatActivity {
     private Spinner uebungSpinner;
     private ArrayAdapter<String> uebungAdapter;
     private List<String> uebungenList = new ArrayList<>();
+    private SaveFileManager saveFileManager = new SaveFileManager();
+    private Kind currentKind = new Kind();
+    private String currentUebungName = "Übung 1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_uebungscreator);
 
         // Initialize new views
         uebungSpinner = findViewById(R.id.uebungSpinner);
+        dropZone = findViewById(R.id.dropZone);
         ImageButton deleteUebungButton = findViewById(R.id.deleteUebungButton);
 
         // Setup Übung Spinner
-        uebungenList.add("Übung 1");
-        uebungenList.add("Übung hinzufügen");
-
-        //uebungAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, uebungenList);
         uebungAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, uebungenList);
-
         uebungAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         uebungSpinner.setAdapter(uebungAdapter);
+
+        // Load saved exercises FIRST
+        loadSavedUebungen();
+        //uebungAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, uebungenList);
         Log.d("DEBUG", "uebungenList size: " + uebungenList.size());
         Log.d("SpinnerDebug", "uebungenList contents: " + uebungenList.toString());
+        // Initialize spinner with existing saved exercises
+
+        // Rest of onCreate remains the same until the end...
+        findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
+
+        // Load initial exercise
+        loadUebung(currentUebungName);
 
 
         // Übung Spinner selection listener
@@ -69,11 +80,12 @@ public class uebungscreator extends AppCompatActivity {
                 String selected = uebungenList.get(position);
                 if (selected.equals("Übung hinzufügen")) {
                     showAddUebungDialog();
-                    // Reset selection to previous item
                     uebungSpinner.setSelection(0);
                 } else {
-                    clearRightPanel();
-                    adapter.resetDisabledElements();
+                    if (!selected.equals(currentUebungName)) {
+                        currentUebungName = selected;
+                        loadUebung(currentUebungName);
+                    }
                 }
             }
 
@@ -122,6 +134,81 @@ public class uebungscreator extends AppCompatActivity {
 
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
     }
+    private void loadSavedUebungen() {
+        File directory = getFilesDir();
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(".creator.kind"));
+        Log.d("DEBUG", "Filecount: "+ files.length);
+        uebungenList.clear();
+
+        // Always add the default exercise first
+        uebungenList.add("Übung 1");
+
+        // Add existing saved exercises
+        if(files != null && files.length > 0) {
+            for (File file : files) {
+                String name = file.getName().replace(".creator.kind", "");
+                Log.d("DEBUG", "File: " + name);
+                if(!uebungenList.contains(name)) {  // Prevent duplicates
+                    uebungenList.add(name);
+                }
+            }
+        }
+
+        // Always add "add exercise" at the end
+        uebungenList.add("Übung hinzufügen");
+
+        uebungAdapter.notifyDataSetChanged();
+    }
+
+    private void loadUebung(String uebungName) {
+        try {
+            currentKind = saveFileManager.loadKind(uebungscreator.this, uebungName);
+            currentUebungName = uebungName;
+
+            // Update UI for current category
+            refreshDropZone();
+
+            // Update category spinner if needed
+            String loadedCategory = currentKind._geraete.isEmpty() ?
+                    selectedCategory :
+                    currentKind._geraete.get(0)._geraetname;
+
+            if(!loadedCategory.equals(selectedCategory)) {
+                int position = new ArrayList<>(elementData.keySet()).indexOf(loadedCategory);
+                if(position >= 0) {
+                    categorySpinner.setSelection(position);
+                }
+            }
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void updateElementOrderInModel() {
+        Geraet geraet = getCurrentGeraet();
+        geraet._elemente.clear();
+
+        // Read elements from drop zone in current order
+        for(int i = 0; i < dropZone.getChildCount(); i += 2) { // Skip separators
+            View child = dropZone.getChildAt(i);
+            if(child instanceof TextView) {
+                geraet._elemente.add(((TextView) child).getText().toString());
+            }
+        }
+        saveCurrentKind();
+    }
+    private void refreshDropZone() {
+        clearRightPanel();
+        List<String> elements = currentKind.getGeraetElements(selectedCategory);
+        // Add elements in stored order and disable groups
+        for (String element : elements) {
+            String group = getGroupForElement(element);
+            addElementToDropZone(element, group);
+            disableAlternativeElements(element);
+        }
+    }
     private void showAddUebungDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Übung hinzufügen");
@@ -131,12 +218,19 @@ public class uebungscreator extends AppCompatActivity {
         builder.setPositiveButton("Hinzufügen", (dialog, which) -> {
             String newName = input.getText().toString().trim();
             if (!newName.isEmpty()) {
-                // Insert new Übung before "Übung hinzufügen"
+                // Create new Kind
+                Kind newKind = new Kind();
+                newKind._name = newName;
+                try {
+                    saveFileManager.saveKind(uebungscreator.this, newKind, newName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 uebungenList.add(uebungenList.size() - 1, newName);
                 uebungAdapter.notifyDataSetChanged();
-                clearRightPanel();
-                adapter.resetDisabledElements();
                 uebungSpinner.setSelection(uebungenList.indexOf(newName));
+                loadUebung(newName);
             }
         });
         builder.setNegativeButton("Abbrechen", null);
@@ -147,15 +241,16 @@ public class uebungscreator extends AppCompatActivity {
         int position = uebungSpinner.getSelectedItemPosition();
         String current = uebungenList.get(position);
 
-        if (position == 0 || current.equals("Übung hinzufügen")) {
-            return; // Can't delete default or add button
-        }
+        if (position == 0 || current.equals("Übung hinzufügen")) return;
+
+        // Delete file
+        File file = new File(getFilesDir(), current + ".creator.kind");
+        if (file.exists()) file.delete();
 
         uebungenList.remove(position);
         uebungAdapter.notifyDataSetChanged();
         uebungSpinner.setSelection(position > 0 ? position - 1 : 0);
-        clearRightPanel();
-        adapter.resetDisabledElements();
+        loadUebung(uebungenList.get(uebungSpinner.getSelectedItemPosition()));
     }
     private void setupCategorySpinner() {
         List<String> categories = new ArrayList<>(elementData.keySet());
@@ -172,7 +267,7 @@ public class uebungscreator extends AppCompatActivity {
                 // Clear the right panel before updating
                 clearRightPanel();
                 adapter.resetDisabledElements();
-
+                refreshDropZone();
                 // Update the RecyclerView with the new elements
                 adapter.updateElements(elements);
             }
@@ -224,6 +319,8 @@ public class uebungscreator extends AppCompatActivity {
                         dropZone.addView(draggedView, insertIndex);
                         View newSeparator = createSeparator();
                         dropZone.addView(newSeparator, insertIndex + 1);
+                        updateElementOrderInModel();
+
                     } else {
                         // ADDING: New element from the left panel
                         String group = getGroupForElement(element);
@@ -232,12 +329,46 @@ public class uebungscreator extends AppCompatActivity {
                             disableAlternativeElements(element);
                         }
                     }
+
+
                     return true;
             }
+            saveCurrentKind(); // Add this line
             return true;
         });
     }
+    private void addElementToCurrentKind(String element) {
+        Geraet geraet = getCurrentGeraet();
+        if (!geraet._elemente.contains(element)) {
+            geraet._elemente.add(element);
+        }
+    }
+    private void removeElementFromCurrentKind(String element) {
+        Geraet geraet = getCurrentGeraet();
+        geraet._elemente.remove(element);
+    }
 
+    private Geraet getCurrentGeraet() {
+        for (Geraet g : currentKind._geraete) {
+            if (g._geraetname.equals(selectedCategory)) {
+                return g;
+            }
+        }
+        Geraet newGeraet = new Geraet();
+        newGeraet._geraetname = selectedCategory;
+        currentKind._geraete.add(newGeraet);
+        return newGeraet;
+    }
+
+    private void saveCurrentKind() {
+        Log.d("DEBUG", "Saving Kind");
+        try {
+            saveFileManager.saveKind(uebungscreator.this, currentKind, currentUebungName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("DEBUG", "Error saving Kind");
+        }
+    }
     private String getGroupForElement(String element) {
         // Loop through all groups to find the group that contains the element
         for (String[][] groupArray : elementData.values()) {
@@ -287,6 +418,10 @@ public class uebungscreator extends AppCompatActivity {
         dropZone.addView(textView);
         dropZone.addView(createSeparator());
         addedGroups.add(group);
+
+        // Add to current Kind and save
+        addElementToCurrentKind(element);
+        saveCurrentKind();
     }
 
     private void disableAlternativeElements(String selectedElement) {
@@ -350,6 +485,12 @@ public class uebungscreator extends AppCompatActivity {
         String groupIdentifier = getGroupForElement(element);
         addedGroups.remove(groupIdentifier);
         enableElementsInGroup(element);
+        addedGroups.remove(groupIdentifier);
+        enableElementsInGroup(element);
+
+        // Remove from current Kind and save
+        removeElementFromCurrentKind(element);
+        saveCurrentKind();
     }
     private void enableElementsInGroup(String element) {
         // Get groups for the current category
