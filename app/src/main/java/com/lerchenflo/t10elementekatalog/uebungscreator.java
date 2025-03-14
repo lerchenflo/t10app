@@ -137,7 +137,7 @@ public class uebungscreator extends AppCompatActivity {
     private void loadSavedUebungen() {
         File directory = getFilesDir();
         File[] files = directory.listFiles((dir, name) -> name.endsWith(".creator.kind"));
-
+        Log.d("DEBUG", "Filecount: "+ files.length);
         uebungenList.clear();
 
         // Always add the default exercise first
@@ -147,6 +147,7 @@ public class uebungscreator extends AppCompatActivity {
         if(files != null && files.length > 0) {
             for (File file : files) {
                 String name = file.getName().replace(".creator.kind", "");
+                Log.d("DEBUG", "File: " + name);
                 if(!uebungenList.contains(name)) {  // Prevent duplicates
                     uebungenList.add(name);
                 }
@@ -163,7 +164,22 @@ public class uebungscreator extends AppCompatActivity {
         try {
             currentKind = saveFileManager.loadKind(uebungscreator.this, uebungName);
             currentUebungName = uebungName;
+
+            // Update UI for current category
             refreshDropZone();
+
+            // Update category spinner if needed
+            String loadedCategory = currentKind._geraete.isEmpty() ?
+                    selectedCategory :
+                    currentKind._geraete.get(0)._geraetname;
+
+            if(!loadedCategory.equals(selectedCategory)) {
+                int position = new ArrayList<>(elementData.keySet()).indexOf(loadedCategory);
+                if(position >= 0) {
+                    categorySpinner.setSelection(position);
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -233,7 +249,7 @@ public class uebungscreator extends AppCompatActivity {
                 // Clear the right panel before updating
                 clearRightPanel();
                 adapter.resetDisabledElements();
-
+                refreshDropZone();
                 // Update the RecyclerView with the new elements
                 adapter.updateElements(elements);
             }
@@ -323,10 +339,12 @@ public class uebungscreator extends AppCompatActivity {
     }
 
     private void saveCurrentKind() {
+        Log.d("DEBUG", "Saving Kind")
         try {
             saveFileManager.saveKind(uebungscreator.this, currentKind, currentUebungName);
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d("DEBUG", "Error saving Kind");
         }
     }
     private String getGroupForElement(String element) {
