@@ -284,7 +284,6 @@ public class uebungscreator extends AppCompatActivity {
                     if (draggedView.getParent() == dropZone) {
                         draggedIndex = dropZone.indexOfChild(draggedView);
                     }
-                    saveCurrentKind(); // Add this line
                     return true;
 
                 case DragEvent.ACTION_DROP:
@@ -306,6 +305,8 @@ public class uebungscreator extends AppCompatActivity {
                         dropZone.addView(draggedView, insertIndex);
                         View newSeparator = createSeparator();
                         dropZone.addView(newSeparator, insertIndex + 1);
+
+
                     } else {
                         // ADDING: New element from the left panel
                         String group = getGroupForElement(element);
@@ -314,8 +315,11 @@ public class uebungscreator extends AppCompatActivity {
                             disableAlternativeElements(element);
                         }
                     }
+
+
                     return true;
             }
+            saveCurrentKind(); // Add this line
             return true;
         });
     }
