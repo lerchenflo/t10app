@@ -100,6 +100,12 @@ public class uebungscreator extends AppCompatActivity {
         findViewById(R.id.clear).setOnClickListener(v -> {
             clearRightPanel();
             adapter.resetDisabledElements();
+
+            // Remove elements from the current Geraet and save
+            Geraet currentGeraet = getCurrentGeraet();
+            currentGeraet._elemente.clear();
+            saveCurrentKind();
+
         });
         elementList = findViewById(R.id.recyclerView);
         dropZone = findViewById(R.id.dropZone);
