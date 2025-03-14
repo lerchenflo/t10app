@@ -339,7 +339,7 @@ public class uebungscreator extends AppCompatActivity {
     }
 
     private void saveCurrentKind() {
-        Log.d("DEBUG", "Saving Kind")
+        Log.d("DEBUG", "Saving Kind");
         try {
             saveFileManager.saveKind(uebungscreator.this, currentKind, currentUebungName);
         } catch (IOException e) {
