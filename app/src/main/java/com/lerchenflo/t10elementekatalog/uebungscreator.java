@@ -560,7 +560,7 @@ public class uebungscreator extends AppCompatActivity {
                                 if (listView != null) {
                                     listView.setOnItemLongClickListener((parent, view, position, id) -> {
                                         String selectedUebung = uebungenList.get(position);
-                                        if (!selectedUebung.equals("Übung hinzufügen")) {
+                                        if (!selectedUebung.equals("Übung hinzufügen") && position < uebungenList.size() - 2) {
                                             showContextMenu(view, position);
                                         }
                                         return true;
@@ -621,9 +621,10 @@ public class uebungscreator extends AppCompatActivity {
 
         try {
             Kind kindToShare = saveFileManager.loadKind(this, uebungName);
-            String json = kindToShare.toJson(); // Implement toJson() in Kind
+            String json = kindToShare.toJson();
 
-            File file = new File(getCacheDir(), uebungName + ".txt");
+            // Use .sharedkind extension for the file
+            File file = new File(getCacheDir(), uebungName + ".sharedkind");
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(json.getBytes());
             fos.close();
@@ -632,7 +633,8 @@ public class uebungscreator extends AppCompatActivity {
                     "com.lerchenflo.t10elementekatalog.fileprovider", file);
 
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
+            shareIntent.setType("*/*"); // MIME type for text files
+
             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(Intent.createChooser(shareIntent, "Share Übung"));
