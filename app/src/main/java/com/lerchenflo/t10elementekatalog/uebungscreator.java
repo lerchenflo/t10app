@@ -33,11 +33,11 @@ public class uebungscreator extends AppCompatActivity {
 
     private RecyclerView elementList;
     private LinearLayout dropZone;
-    private Spinner categorySpinner;
+    private Spinner geraeteSpinner;
     private uebungscreator_ElementAdapter adapter;
     private List<String> elements;
     private HashMap<String, String[][]> elementData = new HashMap<>();
-    private String selectedCategory = "Boden"; // Default category
+    private String selectedgeraet = "Boden"; // Default category
     private int draggedIndex = -1; // Track the index of the dragged element
 
     private Set<String> addedGroups = new HashSet<>(); // To track groups already added to the drop zone
@@ -62,7 +62,7 @@ public class uebungscreator extends AppCompatActivity {
         // Initialize new views
         uebungSpinner = findViewById(R.id.uebungSpinner);
         dropZone = findViewById(R.id.dropZone);
-        ImageButton deleteUebungButton = findViewById(R.id.deleteUebungButton);
+        ImageButton deleteKindButton = findViewById(R.id.deleteKindButton);
 
         // Setup Übung Spinner
         uebungAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, uebungenList);
@@ -104,7 +104,7 @@ public class uebungscreator extends AppCompatActivity {
         });
 
         // Delete Übung Button
-        deleteUebungButton.setOnClickListener(v -> deleteCurrentUebung());
+        deleteKindButton.setOnClickListener(v -> deleteCurrentKind());
 
 
         findViewById(R.id.clear).setOnClickListener(v -> {
@@ -119,10 +119,10 @@ public class uebungscreator extends AppCompatActivity {
         });
         elementList = findViewById(R.id.recyclerView);
         dropZone = findViewById(R.id.dropZone);
-        categorySpinner = findViewById(R.id.categorySpinner);
+        geraeteSpinner = findViewById(R.id.geraeteSpinner);
         View trashcan = findViewById(R.id.trashcan); // Add trashcan view
 
-        // Initialize category data
+        // Initialize geraet data
         elementData.put("Boden", constants.Boden);
         elementData.put("Barren", constants.Barren);
         elementData.put("Balken", constants.Balken);
@@ -132,8 +132,8 @@ public class uebungscreator extends AppCompatActivity {
         elementData.put("Tiefreck", constants.Tiefreck);
         elementData.put("Ringe", constants.Ringe);
 
-        setupCategorySpinner();
-        loadElements(selectedCategory);
+        setupgeraeteSpinner();
+        loadElements(selectedgeraet);
 
         adapter = new uebungscreator_ElementAdapter(elements, this);
         elementList.setLayoutManager(new LinearLayoutManager(this));
@@ -181,18 +181,18 @@ public class uebungscreator extends AppCompatActivity {
             currentKind = saveFileManager.loadKind(uebungscreator.this, uebungName);
             currentUebungName = uebungName;
 
-            // Update UI for current category
+            // Update UI for current geraet
             refreshDropZone();
 
-            // Update category spinner if needed
-            String loadedCategory = currentKind._geraete.isEmpty() ?
-                    selectedCategory :
+            // Update geraet spinner if needed
+            String loadedgeraet = currentKind._geraete.isEmpty() ?
+                    selectedgeraet :
                     currentKind._geraete.get(0)._geraetname;
 
-            if(!loadedCategory.equals(selectedCategory)) {
-                int position = new ArrayList<>(elementData.keySet()).indexOf(loadedCategory);
+            if(!loadedgeraet.equals(selectedgeraet)) {
+                int position = new ArrayList<>(elementData.keySet()).indexOf(loadedgeraet);
                 if(position >= 0) {
-                    categorySpinner.setSelection(position);
+                    geraeteSpinner.setSelection(position);
                 }
             }
 
@@ -217,7 +217,7 @@ public class uebungscreator extends AppCompatActivity {
     }
     private void refreshDropZone() {
         clearRightPanel();
-        List<String> elements = currentKind.getGeraetElements(selectedCategory);
+        List<String> elements = currentKind.getGeraetElements(selectedgeraet);
         // Add elements in stored order and disable groups
         for (String element : elements) {
             String group = getGroupForElement(element);
@@ -253,7 +253,7 @@ public class uebungscreator extends AppCompatActivity {
         builder.show();
     }
 
-    private void deleteCurrentUebung() {
+    private void deleteCurrentKind() {
         int position = uebungSpinner.getSelectedItemPosition();
         String current = uebungenList.get(position);
 
@@ -268,17 +268,17 @@ public class uebungscreator extends AppCompatActivity {
         uebungSpinner.setSelection(position > 0 ? position - 1 : 0);
         loadUebung(uebungenList.get(uebungSpinner.getSelectedItemPosition()));
     }
-    private void setupCategorySpinner() {
+    private void setupgeraeteSpinner() {
         List<String> categories = new ArrayList<>(elementData.keySet());
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(spinnerAdapter);
+        geraeteSpinner.setAdapter(spinnerAdapter);
 
-        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        geraeteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedCategory = categories.get(position);
-                loadElements(selectedCategory);
+                selectedgeraet = categories.get(position);
+                loadElements(selectedgeraet);
 
                 // Clear the right panel before updating
                 clearRightPanel();
@@ -293,10 +293,10 @@ public class uebungscreator extends AppCompatActivity {
         });
     }
 
-    private void loadElements(String category) {
+    private void loadElements(String geraet) {
         elements = new ArrayList<>();
-        if (elementData.containsKey(category)) {
-            for (String[] group : elementData.get(category)) {
+        if (elementData.containsKey(geraet)) {
+            for (String[] group : elementData.get(geraet)) {
                 for (String item : group) {
                     elements.add(item);
                 }
@@ -366,12 +366,12 @@ public class uebungscreator extends AppCompatActivity {
 
     private Geraet getCurrentGeraet() {
         for (Geraet g : currentKind._geraete) {
-            if (g._geraetname.equals(selectedCategory)) {
+            if (g._geraetname.equals(selectedgeraet)) {
                 return g;
             }
         }
         Geraet newGeraet = new Geraet();
-        newGeraet._geraetname = selectedCategory;
+        newGeraet._geraetname = selectedgeraet;
         currentKind._geraete.add(newGeraet);
         return newGeraet;
     }
@@ -441,8 +441,8 @@ public class uebungscreator extends AppCompatActivity {
     }
 
     private void disableAlternativeElements(String selectedElement) {
-        // Get the groups for the current category
-        String[][] groups = elementData.get(selectedCategory);
+        // Get the groups for the current geraet
+        String[][] groups = elementData.get(selectedgeraet);
         if (groups != null) {
             // Find the group that contains the selectedElement
             List<String> elementsToDisable = new ArrayList<>();
@@ -509,8 +509,8 @@ public class uebungscreator extends AppCompatActivity {
         saveCurrentKind();
     }
     private void enableElementsInGroup(String element) {
-        // Get groups for the current category
-        String[][] groups = elementData.get(selectedCategory);
+        // Get groups for the current geraet
+        String[][] groups = elementData.get(selectedgeraet);
         if (groups != null) {
             for (String[] group : groups) {
                 for (String item : group) {

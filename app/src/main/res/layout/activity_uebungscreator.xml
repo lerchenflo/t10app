@@ -38,27 +38,27 @@
                 android:layout_height="40dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/backbutton_uebungscreator"
-                app:layout_constraintEnd_toStartOf="@id/deleteUebungButton"
+                app:layout_constraintEnd_toStartOf="@id/deleteKindButton"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:id="@+id/deleteUebungButton"
+                android:id="@+id/deleteKindButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@null"
                 android:src="@android:drawable/ic_menu_delete"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/categorySpinner"
+                app:layout_constraintEnd_toStartOf="@id/geraeteSpinner"
                 app:layout_constraintStart_toEndOf="@id/uebungSpinner"
                 app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/categorySpinner"
+            android:id="@+id/geraeteSpinner"
             android:layout_width="0dp"
             android:layout_height="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/deleteUebungButton"
+            app:layout_constraintStart_toEndOf="@id/deleteKindButton"
             app:layout_constraintTop_toTopOf="parent" />
 
 
