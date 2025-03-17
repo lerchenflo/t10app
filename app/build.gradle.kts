@@ -10,7 +10,7 @@ android {
         applicationId = "com.lerchenflo.t10elementekatalog"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
+        versionCode = 7
         versionName = "Beta 1.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -45,13 +45,13 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     //PDF Viewer
-    implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
+    implementation(libs.mhiew.android.pdf.viewer)
 
     //Google play auto update
-    implementation("com.google.android.play:app-update:2.1.0")
+    implementation(libs.app.update)
 
 
     //Gson compile
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.gson)
 
 }
