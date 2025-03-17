@@ -44,6 +44,10 @@ class Kind {
         }
         return new ArrayList<>(); // Return an empty list if no matching Geraet is found
     }
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
 }
 
 class Geraet {

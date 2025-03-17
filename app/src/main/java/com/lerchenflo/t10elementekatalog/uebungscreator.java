@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListPopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -23,12 +24,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import android.view.MotionEvent;
+import android.widget.ListView;
+import androidx.appcompat.widget.PopupMenu;
+import android.content.Intent;
+import android.net.Uri;
+import androidx.core.content.FileProvider;
+import java.io.FileOutputStream;
 public class uebungscreator extends AppCompatActivity {
 
     private RecyclerView elementList;
@@ -62,7 +70,6 @@ public class uebungscreator extends AppCompatActivity {
         // Initialize new views
         uebungSpinner = findViewById(R.id.uebungSpinner);
         dropZone = findViewById(R.id.dropZone);
-        ImageButton deleteKindButton = findViewById(R.id.deleteKindButton);
 
         // Setup Übung Spinner
         uebungAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, uebungenList);
@@ -82,7 +89,7 @@ public class uebungscreator extends AppCompatActivity {
         // Load initial exercise
         loadUebung(currentUebungName);
 
-
+        setupUebungSpinnerLongPress();
         // Übung Spinner selection listener
         uebungSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -103,8 +110,6 @@ public class uebungscreator extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Delete Übung Button
-        deleteKindButton.setOnClickListener(v -> deleteCurrentKind());
 
 
         findViewById(R.id.clear).setOnClickListener(v -> {
@@ -532,5 +537,108 @@ public class uebungscreator extends AppCompatActivity {
             }
         }
         return dropZone.getChildCount(); // Insert at the end
+    }
+    private void setupUebungSpinnerLongPress() {
+        uebungSpinner.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                v.postDelayed(() -> {
+                    try {
+                        Field popupField = Spinner.class.getDeclaredField("mPopup");
+                        popupField.setAccessible(true);
+                        Object popup = popupField.get(uebungSpinner);
+
+                        if (popup instanceof ListPopupWindow) {
+                            ListPopupWindow listPopup = (ListPopupWindow) popup;
+
+                            if (!listPopup.isShowing()) {
+                                listPopup.show(); // Open dropdown only on long press
+                            }
+
+                            // Ensure listView is ready before setting long click
+                            v.postDelayed(() -> {
+                                ListView listView = listPopup.getListView();
+                                if (listView != null) {
+                                    listView.setOnItemLongClickListener((parent, view, position, id) -> {
+                                        String selectedUebung = uebungenList.get(position);
+                                        if (!selectedUebung.equals("Übung hinzufügen")) {
+                                            showContextMenu(view, position);
+                                        }
+                                        return true;
+                                    });
+                                }
+                            }, 50);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, 300); // Longer delay to distinguish from normal taps
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                v.removeCallbacks(null); // Cancel long press if user releases early
+            }
+            return event.getAction() == MotionEvent.ACTION_DOWN; // Consume only long presses
+        });
+    }
+
+
+
+    private void showContextMenu(View anchorView, int position) {
+        PopupMenu popup = new PopupMenu(this, anchorView);
+        popup.getMenuInflater().inflate(R.menu.uebung_context_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.delete) {
+                deleteUebung(position);
+                return true;
+            } else if (item.getItemId() == R.id.share) {
+                shareUebung(position);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
+    }
+    private void deleteUebung(int position) {
+        String uebungName = uebungenList.get(position);
+        if (position == uebungenList.size() - 1 || uebungName.equals("Übung hinzufügen")) return;
+
+        // Delete file
+        File file = new File(getFilesDir(), uebungName + ".creator.kind");
+        if (file.exists()) file.delete();
+
+        // Update UI
+        uebungenList.remove(position);
+        uebungAdapter.notifyDataSetChanged();
+
+        if (currentUebungName.equals(uebungName)) {
+            currentUebungName = uebungenList.get(0);
+            loadUebung(currentUebungName);
+            uebungSpinner.setSelection(0);
+        }
+    }
+
+    private void shareUebung(int position) {
+        String uebungName = uebungenList.get(position);
+        if (uebungName.equals("Übung hinzufügen")) return;
+
+        try {
+            Kind kindToShare = saveFileManager.loadKind(this, uebungName);
+            String json = kindToShare.toJson(); // Implement toJson() in Kind
+
+            File file = new File(getCacheDir(), uebungName + ".txt");
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(json.getBytes());
+            fos.close();
+
+            Uri contentUri = FileProvider.getUriForFile(this,
+                    "com.lerchenflo.t10elementekatalog.fileprovider", file);
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(shareIntent, "Share Übung"));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

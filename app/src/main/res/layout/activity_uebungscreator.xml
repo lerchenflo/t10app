@@ -23,46 +23,34 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@null"
-
             android:src="@android:drawable/ic_menu_revert"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <!-- Übung Container -->
+        <!-- Übung Spinner -->
+        <Spinner
+            android:id="@+id/uebungSpinner"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/backbutton_uebungscreator"
+            app:layout_constraintEnd_toStartOf="@id/geraeteSpinner"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-            <Spinner
-                android:id="@+id/uebungSpinner"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/backbutton_uebungscreator"
-                app:layout_constraintEnd_toStartOf="@id/deleteKindButton"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageButton
-                android:id="@+id/deleteKindButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@null"
-                android:src="@android:drawable/ic_menu_delete"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/geraeteSpinner"
-                app:layout_constraintStart_toEndOf="@id/uebungSpinner"
-                app:layout_constraintTop_toTopOf="parent" />
-
+        <!-- Geraete Spinner -->
         <Spinner
             android:id="@+id/geraeteSpinner"
             android:layout_width="0dp"
             android:layout_height="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/deleteKindButton"
+            app:layout_constraintStart_toEndOf="@id/uebungSpinner"
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <!-- Category Spinner -->
+
+        <!-- Geräte Spinner -->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
