@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,13 +10,81 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.T10Elementekatalog"
-        tools:targetApi="31">
+        tools:targetApi="35">
+
+        <!-- Activity to handle opening .sharedkind files -->
+        <activity
+            android:name=".OpenKindFromFileActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.OPEN_DOCUMENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:mimeType="application/vnd.lerchenflo.sharedkind.bin" />
+                <data android:pathPattern=".*\\.sharedkind.bin" />
+                <data android:host="*" />
+
+                <data android:pathPattern=".*\\.sharedkind.bin" />
+                <data android:pathPattern=".*\\..*\\.sharedkind.bin" />
+                <data android:pathPattern=".*\\..*\\..*\\.sharedkind.bin" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.sharedkind.bin" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.sharedkind.bin" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.sharedkind.bin" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.sharedkind.bin" />
+
+
+            </intent-filter>
+
+            <intent-filter>
+                <!-- needed for properly formatted email messages -->
+                <data
+                    android:host="*"
+                    android:scheme="content"
+                    android:mimeType="application/vnd.lerchenflo"
+                    android:pathPattern=".*\\.sharedkind.bin" />
+                <!-- needed for mangled email messages -->
+                <data
+                    android:scheme="content"
+                    android:mimeType="application/coolapp"
+                    android:pathPattern=".*\\.sharedkind.bin" />
+                <!-- needed for mangled email messages -->
+                <data
+                    android:scheme="content"
+                    android:mimeType="application/octet-stream"
+                    android:pathPattern=".*\\.sharedkind.bin" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+
+            <!-- Register to handle file opening -->
+            <intent-filter>
+                <data android:scheme="file"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.sharedkind.bin"
+                    android:host="*"/>
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+
+        <!-- Other activities -->
         <activity
             android:name=".uebungscreator"
             android:exported="false" />
         <activity
             android:name=".punktezaehlerActivity"
             android:exported="false" />
+
+        <!-- Main Activity (Launcher) -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -27,5 +94,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
