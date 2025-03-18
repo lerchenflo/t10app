@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,11 @@ import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +62,64 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //Gesharte kinder öffnen
+        // Retrieve the data from the intent
+        Intent intent = getIntent();
+        Uri fileUri = intent.getData();
+
+        if (fileUri != null) {
+            // Handle the file URI accordingly
+            // For example, you might open an InputStream to read the file:
+            try {
+                StringBuilder stringBuilder = new StringBuilder();
+                try (InputStream inputStream = getContentResolver().openInputStream(fileUri);
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                }
+
+                //Kind eingelesen, popup
+                AlertDialog.Builder inputDialog = new AlertDialog.Builder(this);
+                inputDialog.setTitle("Kindname eingeben");
+
+                final EditText input = new EditText(this);
+                inputDialog.setView(input);
+
+                inputDialog.setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String name = input.getText().toString();
+                        // Use the entered name
+                        //Toast.makeText(getApplicationContext(), "Entered: " + name, Toast.LENGTH_SHORT).show();
+                        Gson gson = new Gson();
+                        Kind kind = gson.fromJson(stringBuilder.toString(), Kind.class);
+
+
+                        SaveFileManager s = new SaveFileManager();
+                        try {
+                            s.saveKind(MainActivity.this, kind, name);
+                            Intent i = new Intent(MainActivity.this, uebungscreator.class);
+                            startActivity(i);
+                            finish();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+
+                inputDialog.setNegativeButton("Abbrechen", null);
+                inputDialog.show();
+
+            } catch (Exception e) {
+                Toast.makeText(MainActivity.this, "Konnte nicht geladen werden", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+
 
         Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
