@@ -62,7 +62,7 @@ public class uebungscreator extends AppCompatActivity {
     private List<String> uebungenList = new ArrayList<>();
     private SaveFileManager saveFileManager = new SaveFileManager();
     private Kind currentKind = new Kind();
-    private String currentUebungName = "Übung 1";
+    private String currentUebungName = "Übung1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +173,7 @@ public class uebungscreator extends AppCompatActivity {
         uebungenList.clear();
 
         // Always add the default exercise first
-        uebungenList.add("Übung 1");
+        uebungenList.add("Übung1");
 
         // Add existing saved exercises
         if (files != null && files.length > 0) {
