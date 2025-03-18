@@ -1,8 +1,10 @@
 package com.lerchenflo.t10elementekatalog;
+
 import android.content.ClipData;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,13 +32,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import android.view.MotionEvent;
 import android.widget.ListView;
+
 import androidx.appcompat.widget.PopupMenu;
+
 import android.content.Intent;
 import android.net.Uri;
+
 import androidx.core.content.FileProvider;
+
 import java.io.FileOutputStream;
+
 public class uebungscreator extends AppCompatActivity {
 
     private RecyclerView elementList;
@@ -86,8 +94,7 @@ public class uebungscreator extends AppCompatActivity {
         // Rest of onCreate remains the same until the end...
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
 
-        // Load initial exercise
-        loadUebung(currentUebungName);
+
 
         setupUebungSpinnerLongPress();
         // Übung Spinner selection listener
@@ -107,9 +114,9 @@ public class uebungscreator extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
-
 
 
         findViewById(R.id.clear).setOnClickListener(v -> {
@@ -122,10 +129,11 @@ public class uebungscreator extends AppCompatActivity {
             saveCurrentKind();
 
         });
-        elementList = findViewById(R.id.recyclerView);
+
         dropZone = findViewById(R.id.dropZone);
         geraeteSpinner = findViewById(R.id.geraeteSpinner);
         View trashcan = findViewById(R.id.trashcan); // Add trashcan view
+        // Load initial exercise
 
         // Initialize geraet data
         elementData.put("Boden", constants.Boden);
@@ -139,7 +147,7 @@ public class uebungscreator extends AppCompatActivity {
 
         setupgeraeteSpinner();
         loadElements(selectedgeraet);
-
+        elementList = findViewById(R.id.recyclerView);
         adapter = new uebungscreator_ElementAdapter(elements, this);
         elementList.setLayoutManager(new LinearLayoutManager(this));
         elementList.setAdapter(adapter);
@@ -149,27 +157,30 @@ public class uebungscreator extends AppCompatActivity {
                 getResources().getColor(android.R.color.darker_gray),
                 2, 20
         ));
+        loadUebung(currentUebungName);
 
         setupDragAndDrop();
         setupTrashcan(trashcan); // Setup the trashcan drop behavior
 
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
+
     }
+
     private void loadSavedUebungen() {
         File directory = getFilesDir();
         File[] files = directory.listFiles((dir, name) -> name.endsWith(".creator.kind"));
-        Log.d("DEBUG", "Filecount: "+ files.length);
+        Log.d("DEBUG", "Filecount: " + files.length);
         uebungenList.clear();
 
         // Always add the default exercise first
         uebungenList.add("Übung 1");
 
         // Add existing saved exercises
-        if(files != null && files.length > 0) {
+        if (files != null && files.length > 0) {
             for (File file : files) {
                 String name = file.getName().replace(".creator.kind", "");
                 Log.d("DEBUG", "File: " + name);
-                if(!uebungenList.contains(name)) {  // Prevent duplicates
+                if (!uebungenList.contains(name)) {  // Prevent duplicates
                     uebungenList.add(name);
                 }
             }
@@ -194,42 +205,48 @@ public class uebungscreator extends AppCompatActivity {
                     selectedgeraet :
                     currentKind._geraete.get(0)._geraetname;
 
-            if(!loadedgeraet.equals(selectedgeraet)) {
+            if (!loadedgeraet.equals(selectedgeraet)) {
                 int position = new ArrayList<>(elementData.keySet()).indexOf(loadedgeraet);
-                if(position >= 0) {
+                if (position >= 0) {
                     geraeteSpinner.setSelection(position);
                 }
             }
-
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     private void updateElementOrderInModel() {
         Geraet geraet = getCurrentGeraet();
         geraet._elemente.clear();
 
         // Read elements from drop zone in current order
-        for(int i = 0; i < dropZone.getChildCount(); i += 2) { // Skip separators
+        for (int i = 0; i < dropZone.getChildCount(); i += 2) { // Skip separators
             View child = dropZone.getChildAt(i);
-            if(child instanceof TextView) {
+            if (child instanceof TextView) {
                 geraet._elemente.add(((TextView) child).getText().toString());
             }
         }
         saveCurrentKind();
     }
+
     private void refreshDropZone() {
         clearRightPanel();
+        if (adapter != null) {
+            adapter.resetDisabledElements(); // Reset disabled elements
+        } else {
+            Log.e("refreshDropZone", "Adapter is null!");
+        }
         List<String> elements = currentKind.getGeraetElements(selectedgeraet);
-        // Add elements in stored order and disable groups
         for (String element : elements) {
             String group = getGroupForElement(element);
             addElementToDropZone(element, group);
             disableAlternativeElements(element);
         }
     }
+
     private void showAddUebungDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Übung hinzufügen");
@@ -273,6 +290,7 @@ public class uebungscreator extends AppCompatActivity {
         uebungSpinner.setSelection(position > 0 ? position - 1 : 0);
         loadUebung(uebungenList.get(uebungSpinner.getSelectedItemPosition()));
     }
+
     private void setupgeraeteSpinner() {
         List<String> categories = new ArrayList<>(elementData.keySet());
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
@@ -294,7 +312,8 @@ public class uebungscreator extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
     }
 
@@ -358,12 +377,14 @@ public class uebungscreator extends AppCompatActivity {
             return true;
         });
     }
+
     private void addElementToCurrentKind(String element) {
         Geraet geraet = getCurrentGeraet();
         if (!geraet._elemente.contains(element)) {
             geraet._elemente.add(element);
         }
     }
+
     private void removeElementFromCurrentKind(String element) {
         Geraet geraet = getCurrentGeraet();
         geraet._elemente.remove(element);
@@ -390,6 +411,7 @@ public class uebungscreator extends AppCompatActivity {
             Log.d("DEBUG", "Error saving Kind");
         }
     }
+
     private String getGroupForElement(String element) {
         // Loop through all groups to find the group that contains the element
         for (String[][] groupArray : elementData.values()) {
@@ -474,6 +496,7 @@ public class uebungscreator extends AppCompatActivity {
         dropZone.removeAllViews(); // Remove all child views from the dropZone (right panel)
         addedGroups.clear(); // Clear the list of added groups
     }
+
     private void setupTrashcan(View trashcan) {
         trashcan.setOnDragListener((v, event) -> {
             switch (event.getAction()) {
@@ -513,6 +536,7 @@ public class uebungscreator extends AppCompatActivity {
         removeElementFromCurrentKind(element);
         saveCurrentKind();
     }
+
     private void enableElementsInGroup(String element) {
         // Get groups for the current geraet
         String[][] groups = elementData.get(selectedgeraet);
@@ -528,6 +552,7 @@ public class uebungscreator extends AppCompatActivity {
             }
         }
     }
+
     // Helper method to find the index where to insert the dragged element
     private int findInsertIndex(float y) {
         for (int i = 0; i < dropZone.getChildCount(); i++) {
@@ -538,6 +563,7 @@ public class uebungscreator extends AppCompatActivity {
         }
         return dropZone.getChildCount(); // Insert at the end
     }
+
     private void setupUebungSpinnerLongPress() {
         uebungSpinner.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -560,7 +586,7 @@ public class uebungscreator extends AppCompatActivity {
                                 if (listView != null) {
                                     listView.setOnItemLongClickListener((parent, view, position, id) -> {
                                         String selectedUebung = uebungenList.get(position);
-                                        if (!selectedUebung.equals("Übung hinzufügen") && position < uebungenList.size() - 2) {
+                                        if (!selectedUebung.equals("Übung hinzufügen")) {
                                             showContextMenu(view, position);
                                         }
                                         return true;
@@ -580,13 +606,23 @@ public class uebungscreator extends AppCompatActivity {
     }
 
 
-
     private void showContextMenu(View anchorView, int position) {
         PopupMenu popup = new PopupMenu(this, anchorView);
         popup.getMenuInflater().inflate(R.menu.uebung_context_menu, popup.getMenu());
+
+        // Check if it's the last Kind (excluding "Übung hinzufügen")
+        int totalKinds = uebungenList.size() - 1;
+        boolean isLastKind = totalKinds <= 1;
+
+        // Hide delete option if last Kind
+        MenuItem deleteItem = popup.getMenu().findItem(R.id.delete);
+        deleteItem.setVisible(!isLastKind);
+
         popup.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.delete) {
-                deleteUebung(position);
+                if (totalKinds > 1) { // Additional check
+                    deleteUebung(position);
+                }
                 return true;
             } else if (item.getItemId() == R.id.share) {
                 shareUebung(position);
@@ -596,18 +632,22 @@ public class uebungscreator extends AppCompatActivity {
         });
         popup.show();
     }
+
     private void deleteUebung(int position) {
         String uebungName = uebungenList.get(position);
+        int totalKinds = uebungenList.size() - 1; // Exclude "Übung hinzufügen"
+        if (totalKinds <= 1) return; // Prevent deletion of last Kind
+
         if (position == uebungenList.size() - 1 || uebungName.equals("Übung hinzufügen")) return;
 
-        // Delete file
+        // Delete file and update list
         File file = new File(getFilesDir(), uebungName + ".creator.kind");
         if (file.exists()) file.delete();
 
-        // Update UI
         uebungenList.remove(position);
         uebungAdapter.notifyDataSetChanged();
 
+        // Load the first Kind if current was deleted
         if (currentUebungName.equals(uebungName)) {
             currentUebungName = uebungenList.get(0);
             loadUebung(currentUebungName);
