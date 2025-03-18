@@ -53,5 +53,6 @@ dependencies {
 
     //Gson compile
     implementation(libs.gson)
+    implementation(libs.gson.v289)
 
 }

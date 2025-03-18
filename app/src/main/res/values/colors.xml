@@ -27,4 +27,5 @@
     <!-- System UI colors -->
     <color name="dark_status_bar">#121212</color>
     <color name="dark_navigation_bar">#121212</color>
+    <color name="drag_target">#3300ff00</color>
 </resources>
