@@ -11,7 +11,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 7
-        versionName = "Beta 1.6"
+        versionName = "V1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -34,6 +34,7 @@ android {
 
 dependencies {
 
+    //Android Deps
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
