@@ -1,6 +1,7 @@
 package com.lerchenflo.t10elementekatalog;
 
 import android.content.ClipData;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
@@ -93,7 +94,6 @@ public class uebungscreator extends AppCompatActivity {
 
         // Rest of onCreate remains the same until the end...
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
-
 
 
         setupUebungSpinnerLongPress();
@@ -376,6 +376,7 @@ public class uebungscreator extends AppCompatActivity {
             saveCurrentKind(); // Add this line
             return true;
         });
+        setupLeftPanelDropHandler();
     }
 
     private void addElementToCurrentKind(String element) {
@@ -450,7 +451,7 @@ public class uebungscreator extends AppCompatActivity {
         textView.setText(element);
         textView.setPadding(10, 10, 10, 10);
 
-        // Enable drag for reordering
+        // Enable drag for reordering and deletion
         textView.setOnLongClickListener(v -> {
             ClipData data = ClipData.newPlainText("element", element);
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
@@ -458,11 +459,20 @@ public class uebungscreator extends AppCompatActivity {
             return true;
         });
 
+        // Add click feedback
+        textView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                ClipData data = ClipData.newPlainText("element", element);
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+                v.startDragAndDrop(data, shadowBuilder, v, 0);
+                return true;
+            }
+            return false;
+        });
+
         dropZone.addView(textView);
         dropZone.addView(createSeparator());
         addedGroups.add(group);
-
-        // Add to current Kind and save
         addElementToCurrentKind(element);
         saveCurrentKind();
     }
@@ -682,5 +692,45 @@ public class uebungscreator extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setupLeftPanelDropHandler() {
+        elementList.setOnDragListener((v, event) -> {
+            View draggedView = (View) event.getLocalState();
+
+            // Only handle drags originating from the drop zone
+            if (draggedView.getParent() != dropZone) {
+                return false;
+            }
+
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    // Accept drags from drop zone
+                    return true;
+
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    // Visual feedback if needed
+                    v.setBackgroundColor(getResources().getColor(R.color.drag_target));
+                    return true;
+
+                case DragEvent.ACTION_DRAG_EXITED:
+                    // Clear visual feedback
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                    return true;
+
+                case DragEvent.ACTION_DROP:
+                    String element = ((TextView) draggedView).getText().toString();
+                    removeElementFromDropZone(element);
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                    return true;
+
+                case DragEvent.ACTION_DRAG_ENDED:
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                    return true;
+
+                default:
+                    return false;
+            }
+        });
     }
 }
