@@ -12,7 +12,6 @@
         android:theme="@style/Theme.T10Elementekatalog"
         tools:targetApi="35">
 
-        <!-- Other activities -->
         <activity
             android:name=".uebungscreator"
             android:exported="false" />
@@ -20,7 +19,6 @@
             android:name=".punktezaehlerActivity"
             android:exported="false" />
 
-        <!-- Main Activity (Launcher) -->
         <activity
             android:name=".MainActivity"
             android:exported="true">

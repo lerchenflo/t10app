@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private PDFView pdfView;
 
-    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
