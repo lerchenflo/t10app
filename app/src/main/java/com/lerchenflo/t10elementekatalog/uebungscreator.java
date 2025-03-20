@@ -205,7 +205,7 @@ public class uebungscreator extends AppCompatActivity {
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        float deltaY = event.getRawY() - initialY;
+                        float deltaY = initialY - event.getRawY();
                         int newHeight = (int) (initialHeight + deltaY);
 
                         // Constrain height
