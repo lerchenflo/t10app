@@ -101,12 +101,11 @@
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfview_uebungscreator"
         android:layout_width="0dp"
-        android:layout_height="350dp"
+        android:layout_height="330dp"
         android:visibility="gone"
-        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="@+id/dropZone"
-        app:layout_constraintStart_toStartOf="@id/recyclerView" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <!-- Improved Button Container -->
