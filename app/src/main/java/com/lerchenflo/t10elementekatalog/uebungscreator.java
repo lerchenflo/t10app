@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -43,6 +44,8 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.core.content.FileProvider;
+
+import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.FileOutputStream;
 
@@ -132,7 +135,7 @@ public class uebungscreator extends AppCompatActivity {
 
         dropZone = findViewById(R.id.dropZone);
         geraeteSpinner = findViewById(R.id.geraeteSpinner);
-        View trashcan = findViewById(R.id.trashcan); // Add trashcan view
+
         // Load initial exercise
 
         // Initialize geraet data
@@ -140,7 +143,7 @@ public class uebungscreator extends AppCompatActivity {
         elementData.put("Barren", constants.Barren);
         elementData.put("Balken", constants.Balken);
         elementData.put("Pferd", constants.Pferd);
-        elementData.put("Sufenbarren", constants.Stufenbarren);
+        elementData.put("Stufenbarren", constants.Stufenbarren);
         elementData.put("Hochreck", constants.Hochreck);
         elementData.put("Tiefreck", constants.Tiefreck);
         elementData.put("Ringe", constants.Ringe);
@@ -160,11 +163,27 @@ public class uebungscreator extends AppCompatActivity {
         loadUebung(currentUebungName);
 
         setupDragAndDrop();
-        setupTrashcan(trashcan); // Setup the trashcan drop behavior
+        setupPDFviewer();
 
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
 
     }
+
+    private void setupPDFviewer(){
+        Button showpdfbutton = findViewById(R.id.showkatalogbutton);
+        PDFView pdfView = findViewById(R.id.pdfview_uebungscreator);
+        showpdfbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pdfView.getVisibility() == View.GONE){
+                    pdfView.setVisibility(View.VISIBLE);
+                }else{
+                    pdfView.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
 
     private void loadSavedUebungen() {
         File directory = getFilesDir();
@@ -309,6 +328,23 @@ public class uebungscreator extends AppCompatActivity {
                 refreshDropZone();
                 // Update the RecyclerView with the new elements
                 adapter.updateElements(elements);
+
+                //PDF View finden
+                PDFView pdfView = findViewById(R.id.pdfview_uebungscreator);
+                String pdfname = selectedgeraet;
+                //Namen übersetzen
+                pdfname = pdfname.contains("reck")? "Reck": pdfname;
+                pdfname = pdfname.contains("Stufenbarren")? "Reck": pdfname;
+                //PDF laden
+                pdfView.fromAsset(pdfname + ".pdf")
+                        .enableSwipe(true) // Enable swiping to change pages
+                        .swipeHorizontal(false) // Set false for vertical swiping
+                        .enableDoubletap(true) // Enable double tap to zoom
+                        .enableAntialiasing(true)
+                        .enableAnnotationRendering(true)
+                        .defaultPage(0) // Show the first page
+                        .load();
+                Log.d("PDF geladen", selectedgeraet);
             }
 
             @Override
@@ -505,23 +541,6 @@ public class uebungscreator extends AppCompatActivity {
     private void clearRightPanel() {
         dropZone.removeAllViews(); // Remove all child views from the dropZone (right panel)
         addedGroups.clear(); // Clear the list of added groups
-    }
-
-    private void setupTrashcan(View trashcan) {
-        trashcan.setOnDragListener((v, event) -> {
-            switch (event.getAction()) {
-                case DragEvent.ACTION_DROP:
-                    View draggedView = (View) event.getLocalState();
-                    String element = ((TextView) draggedView).getText().toString();
-
-                    // Only remove elements from the drop zone (right panel)
-                    if (draggedView.getParent() == dropZone) {
-                        removeElementFromDropZone(element);
-                    }
-                    break;
-            }
-            return true;
-        });
     }
 
 

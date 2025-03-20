@@ -93,10 +93,20 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintStart_toEndOf="@id/recyclerView"
+        app:layout_constraintBottom_toTopOf="@id/buttonContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
-        app:layout_constraintBottom_toTopOf="@id/buttonContainer"/>
+        app:layout_constraintStart_toEndOf="@id/recyclerView"
+        app:layout_constraintTop_toBottomOf="@id/topBar" />
+
+    <com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/pdfview_uebungscreator"
+        android:layout_width="0dp"
+        android:layout_height="330dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
     <!-- Improved Button Container -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -117,7 +127,7 @@
             android:text="Übung löschen"
             android:textColor="#FFFFFF"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/trashcan"
+            app:layout_constraintEnd_toStartOf="@id/showkatalogbutton"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginEnd="4dp"
@@ -125,11 +135,11 @@
 
         <!-- Element löschen -->
         <Button
-            android:id="@+id/trashcan"
+            android:id="@+id/showkatalogbutton"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:backgroundTint="@android:color/darker_gray"
-            android:text="Element löschen"
+            android:text="Elementekatalog"
             android:textColor="#FFFFFF"
             app:layout_constraintStart_toEndOf="@id/clear"
             app:layout_constraintEnd_toEndOf="parent"
