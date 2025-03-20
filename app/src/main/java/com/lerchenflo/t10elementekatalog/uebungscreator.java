@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.HapticFeedbackConstants;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +22,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -68,6 +70,18 @@ public class uebungscreator extends AppCompatActivity {
     private SaveFileManager saveFileManager = new SaveFileManager();
     private Kind currentKind = new Kind();
     private String currentUebungName = "Übung1";
+
+
+    private CardView pdfContainer;
+    private PDFView pdfView;
+    private View dragHandle;
+    private float initialY;
+    private int initialHeight;
+    private final int MIN_HEIGHT_DP = 150;
+    private final int MAX_HEIGHT_DP = 800;
+    private int minHeightPx;
+    private int maxHeightPx;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,25 +184,57 @@ public class uebungscreator extends AppCompatActivity {
 
     }
 
-    private void setupPDFviewer(){
+    private void setupPDFviewer() {
         Button showpdfbutton = findViewById(R.id.showkatalogbutton);
-        CardView pdfContainer = findViewById(R.id.pdfview_container); // Changed to CardView
-        PDFView pdfView = findViewById(R.id.pdfview_uebungscreator);
+        pdfContainer = findViewById(R.id.pdfview_container);
+        pdfView = findViewById(R.id.pdfview_uebungscreator);
+        dragHandle = findViewById(R.id.drag_handle);
 
-        showpdfbutton.setOnClickListener(new View.OnClickListener() {
+        // Convert dp to pixels
+        minHeightPx = (int) (MIN_HEIGHT_DP * getResources().getDisplayMetrics().density);
+        maxHeightPx = (int) (MAX_HEIGHT_DP * getResources().getDisplayMetrics().density);
+
+        // Set up drag listener
+        dragHandle.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                if (pdfContainer.getVisibility() == View.GONE){
-                    pdfContainer.setVisibility(View.VISIBLE);
-                    // Optional: Add animation
-                    pdfContainer.setAlpha(0f);
-                    pdfContainer.animate()
-                            .alpha(1f)
-                            .setDuration(300)
-                            .start();
-                } else {
-                    pdfContainer.setVisibility(View.GONE);
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialY = event.getRawY();
+                        initialHeight = pdfContainer.getHeight();
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        float deltaY = event.getRawY() - initialY;
+                        int newHeight = (int) (initialHeight + deltaY);
+
+                        // Constrain height
+                        newHeight = Math.max(minHeightPx, Math.min(newHeight, maxHeightPx));
+
+                        // Update layout
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) pdfContainer.getLayoutParams();
+                        params.height = newHeight;
+                        pdfContainer.setLayoutParams(params);
+
+                        // Optional: Add haptic feedback
+                        if (newHeight == minHeightPx || newHeight == maxHeightPx) {
+                            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                        }
+                        return true;
                 }
+                return false;
+            }
+        });
+
+        showpdfbutton.setOnClickListener(v -> {
+            if (pdfContainer.getVisibility() == View.GONE) {
+                pdfContainer.setVisibility(View.VISIBLE);
+                // Reset to default height when showing
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) pdfContainer.getLayoutParams();
+                params.height = (int) (330 * getResources().getDisplayMetrics().density);
+                pdfContainer.setLayoutParams(params);
+            } else {
+                pdfContainer.setVisibility(View.GONE);
             }
         });
     }

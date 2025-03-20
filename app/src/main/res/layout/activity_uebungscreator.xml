@@ -98,6 +98,7 @@
         app:layout_constraintStart_toEndOf="@id/recyclerView"
         app:layout_constraintTop_toBottomOf="@id/topBar" />
 
+    <!-- Replace the existing PDFView/CardView with this -->
     <androidx.cardview.widget.CardView
         android:id="@+id/pdfview_container"
         android:layout_width="0dp"
@@ -110,12 +111,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.github.barteksc.pdfviewer.PDFView
-            android:id="@+id/pdfview_uebungscreator"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="4dp"/>
+            android:orientation="vertical">
 
+            <!-- Drag Handle -->
+            <View
+                android:id="@+id/drag_handle"
+                android:layout_width="40dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/drag_handle_bg"
+                android:layout_marginTop="8dp"/>
+
+            <com.github.barteksc.pdfviewer.PDFView
+                android:id="@+id/pdfview_uebungscreator"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="4dp"/>
+
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
 
