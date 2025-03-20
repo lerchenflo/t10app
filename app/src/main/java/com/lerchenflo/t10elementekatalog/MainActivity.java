@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,8 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -140,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Add submenu items under the parent item
-        MenuItem alle = menuBuilder.add(0, 1, 0, submenuIndent + "Alle Elemente");
+        MenuItem allgemein = menuBuilder.add(0, 1, 0, submenuIndent + "Allgemein");
         MenuItem balken = menuBuilder.add(0, 2, 0, submenuIndent + "Balken");
         MenuItem barren = menuBuilder.add(0, 3, 0, submenuIndent + "Barren");
         MenuItem boden = menuBuilder.add(0, 4, 0, submenuIndent + "Boden");
@@ -191,13 +188,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        loadPdf("Alle.pdf");
+        loadPdf("Allgemein.pdf");
 
         // Handle menu item clicks
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case 1:
-                    loadPdf("Alle.pdf");
+                    loadPdf("Allgemein.pdf");
                     break;
                 case 2:
                     loadPdf("Balken.pdf");
@@ -228,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                     isSubmenuVisible[0] = !isSubmenuVisible[0];
                     boolean visibility = isSubmenuVisible[0];
                     parentItem.setIcon(visibility ? com.google.android.material.R.drawable.mtrl_ic_arrow_drop_up : com.google.android.material.R.drawable.mtrl_ic_arrow_drop_down);
-                    alle.setVisible(visibility);
+                    allgemein.setVisible(visibility);
                     barren.setVisible(visibility);
                     reck.setVisible(visibility);
                     minitramp.setVisible(visibility);
