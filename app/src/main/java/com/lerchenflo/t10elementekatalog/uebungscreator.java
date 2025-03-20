@@ -334,7 +334,7 @@ public class uebungscreator extends AppCompatActivity {
                 String pdfname = selectedgeraet;
                 //Namen übersetzen
                 pdfname = pdfname.contains("reck")? "Reck": pdfname;
-                pdfname = pdfname.contains("barren")? "Barren": pdfname;
+                pdfname = pdfname.contains("Stufenbarren")? "Reck": pdfname;
                 //PDF laden
                 pdfView.fromAsset(pdfname + ".pdf")
                         .enableSwipe(true) // Enable swiping to change pages
