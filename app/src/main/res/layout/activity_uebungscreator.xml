@@ -98,14 +98,25 @@
         app:layout_constraintStart_toEndOf="@id/recyclerView"
         app:layout_constraintTop_toBottomOf="@id/topBar" />
 
-    <com.github.barteksc.pdfviewer.PDFView
-        android:id="@+id/pdfview_uebungscreator"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/pdfview_container"
         android:layout_width="0dp"
         android:layout_height="330dp"
         android:visibility="gone"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/pdfview_uebungscreator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp"/>
+
+    </androidx.cardview.widget.CardView>
 
 
     <!-- Improved Button Container -->

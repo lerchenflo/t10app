@@ -20,6 +20,7 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -171,14 +172,22 @@ public class uebungscreator extends AppCompatActivity {
 
     private void setupPDFviewer(){
         Button showpdfbutton = findViewById(R.id.showkatalogbutton);
+        CardView pdfContainer = findViewById(R.id.pdfview_container); // Changed to CardView
         PDFView pdfView = findViewById(R.id.pdfview_uebungscreator);
+
         showpdfbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pdfView.getVisibility() == View.GONE){
-                    pdfView.setVisibility(View.VISIBLE);
-                }else{
-                    pdfView.setVisibility(View.GONE);
+                if (pdfContainer.getVisibility() == View.GONE){
+                    pdfContainer.setVisibility(View.VISIBLE);
+                    // Optional: Add animation
+                    pdfContainer.setAlpha(0f);
+                    pdfContainer.animate()
+                            .alpha(1f)
+                            .setDuration(300)
+                            .start();
+                } else {
+                    pdfContainer.setVisibility(View.GONE);
                 }
             }
         });
