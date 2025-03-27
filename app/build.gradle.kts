@@ -10,7 +10,7 @@ android {
         applicationId = "com.lerchenflo.t10elementekatalog"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
+        versionCode = 8
         versionName = "V1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -54,6 +54,6 @@ dependencies {
 
     //Gson compile
     implementation(libs.gson)
-    implementation(libs.gson.v289)
+    //implementation(libs.gson.v289)
 
 }
