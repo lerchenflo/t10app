@@ -58,10 +58,10 @@ public class uebungscreator extends AppCompatActivity {
     private uebungscreator_ElementAdapter adapter;
     private List<String> elements;
     private HashMap<String, String[][]> elementData = new HashMap<>();
-    private String selectedgeraet = "Boden"; // Default category
-    private int draggedIndex = -1; // Track the index of the dragged element
+    private String selectedgeraet = "Boden";
+    private int draggedIndex = -1;
 
-    private Set<String> addedGroups = new HashSet<>(); // To track groups already added to the drop zone
+    private Set<String> addedGroups = new HashSet<>();
     private Spinner uebungSpinner;
     private ArrayAdapter<String> uebungAdapter;
     private List<String> uebungenList = new ArrayList<>();
@@ -122,7 +122,7 @@ public class uebungscreator extends AppCompatActivity {
         uebungSpinner.setAdapter(uebungAdapter);
         loadSavedUebungen();
 
-        // Customize Übung Spinner dropdown background
+        // Customize Übung Spinner dropdown background (already working)
         try {
             Field popupField = Spinner.class.getDeclaredField("mPopup");
             popupField.setAccessible(true);
@@ -181,15 +181,24 @@ public class uebungscreator extends AppCompatActivity {
             geraeteSpinner.setSelection(0);
         }
 
-        // Customize Geraete Spinner dropdown background
-        try {
-            Field popupField = Spinner.class.getDeclaredField("mPopup");
-            popupField.setAccessible(true);
-            ListPopupWindow popup = (ListPopupWindow) popupField.get(geraeteSpinner);
-            popup.setBackgroundDrawable(getResources().getDrawable(R.drawable.spinner_dropdown_background));
-        } catch (Exception e) {
-            Log.e("SpinnerBackground", "Failed to set geraeteSpinner background", e);
-        }
+        // Customize Geraete Spinner dropdown background with a touch listener
+        geraeteSpinner.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                try {
+                    Field popupField = Spinner.class.getDeclaredField("mPopup");
+                    popupField.setAccessible(true);
+                    ListPopupWindow popup = (ListPopupWindow) popupField.get(geraeteSpinner);
+                    if (popup != null && !popup.isShowing()) {
+                        popup.setBackgroundDrawable(getResources().getDrawable(R.drawable.spinner_dropdown_background));
+                        Log.d("GeraeteSpinner", "Set dropdown background before showing");
+                        popup.show(); // Manually show the dropdown
+                    }
+                } catch (Exception e) {
+                    Log.e("SpinnerBackground", "Failed to set geraeteSpinner background", e);
+                }
+            }
+            return false; // Allow normal spinner behavior to proceed
+        });
 
         // Rest of onCreate
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
@@ -244,7 +253,6 @@ public class uebungscreator extends AppCompatActivity {
         setupPDFviewer();
     }
 
-    // New SpacingItemDecoration class
     public static class SpacingItemDecoration extends RecyclerView.ItemDecoration {
         private final int spacing;
 
@@ -255,11 +263,9 @@ public class uebungscreator extends AppCompatActivity {
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
             int position = parent.getChildAdapterPosition(view);
-            // Add spacing to all items except the last one
             if (position != parent.getAdapter().getItemCount() - 1) {
                 outRect.bottom = spacing;
             }
-            // Add top spacing to the first item only
             if (position == 0) {
                 outRect.top = spacing;
             }
