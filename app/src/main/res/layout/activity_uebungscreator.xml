@@ -6,71 +6,73 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1A1A1A"
     tools:context=".uebungscreator">
 
     <!-- Top Bar -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="#2D2D2D"
+        android:layout_margin="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Back Button -->
-        <ImageButton
-            android:id="@+id/backbutton_uebungscreator"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@null"
-            android:src="@android:drawable/ic_menu_revert"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
 
-        <!-- Übung Spinner -->
-        <Spinner
-            android:id="@+id/uebungSpinner"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/backbutton_uebungscreator"
-            app:layout_constraintEnd_toStartOf="@id/geraeteSpinner"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageButton
+                android:id="@+id/backbutton_uebungscreator"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/round_button_background"
+                android:src="@android:drawable/ic_menu_revert"
+                android:tint="#A0A0A0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <!-- Geraete Spinner -->
-        <Spinner
-            android:id="@+id/geraeteSpinner"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/uebungSpinner"
-            app:layout_constraintTop_toTopOf="parent" />
+            <Spinner
+                android:id="@+id/uebungSpinner"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:background="@drawable/spinner_background"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/backbutton_uebungscreator"
+                app:layout_constraintEnd_toStartOf="@id/geraeteSpinner"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"/>
 
-
-
-        <!-- Geräte Spinner -->
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Horizontal Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+            <Spinner
+                android:id="@+id/geraeteSpinner"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:background="@drawable/spinner_background"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/uebungSpinner"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="4dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
     <!-- Elements List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="8dp"
+        android:background="#252525"
+        android:clipToPadding="false"
+        android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/dropZone"
         app:layout_constraintTop_toBottomOf="@id/topBar"
@@ -79,9 +81,9 @@
     <!-- Vertical Divider -->
     <View
         android:id="@+id/view"
-        android:layout_width="2dp"
+        android:layout_width="1dp"
         android:layout_height="0dp"
-        android:background="@android:color/darker_gray"
+        android:background="#404040"
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintBottom_toTopOf="@id/buttonContainer"
         app:layout_constraintStart_toEndOf="@id/recyclerView"/>
@@ -92,13 +94,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
+        android:background="#252525"
         android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@id/buttonContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/recyclerView"
-        app:layout_constraintTop_toBottomOf="@id/topBar" />
+        app:layout_constraintTop_toBottomOf="@id/topBar"/>
 
-    <!-- Replace the existing PDFView/CardView with this -->
+    <!-- PDF Container -->
     <androidx.cardview.widget.CardView
         android:id="@+id/pdfview_container"
         android:layout_width="0dp"
@@ -106,7 +109,7 @@
         android:visibility="gone"
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
-        app:cardBackgroundColor="@android:color/white"
+        app:cardBackgroundColor="#2D2D2D"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -116,13 +119,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Drag Handle -->
             <View
                 android:id="@+id/drag_handle"
                 android:layout_width="40dp"
-                android:layout_height="16dp"
+                android:layout_height="6dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/drag_handle_bg"
+                android:background="@drawable/modern_drag_handle"
                 android:layout_marginTop="8dp"/>
 
             <com.github.barteksc.pdfviewer.PDFView
@@ -131,50 +133,43 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:padding="4dp"/>
-
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-
-    <!-- Improved Button Container -->
+    <!-- Button Container -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="8dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Übung löschen -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/clear"
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:backgroundTint="@android:color/darker_gray"
+            android:layout_height="wrap_content"
             android:text="Übung löschen"
             android:textColor="#FFFFFF"
+            app:cornerRadius="12dp"
+            android:backgroundTint="#D32F2F"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/showkatalogbutton"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="4dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+            android:layout_marginEnd="8dp"/>
 
-        <!-- Element löschen -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/showkatalogbutton"
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:backgroundTint="@android:color/darker_gray"
+            android:layout_height="wrap_content"
             android:text="Elementekatalog"
             android:textColor="#FFFFFF"
+            app:cornerRadius="12dp"
+            android:backgroundTint="#1976D2"
             app:layout_constraintStart_toEndOf="@id/clear"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="4dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
+            android:layout_marginStart="8dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
