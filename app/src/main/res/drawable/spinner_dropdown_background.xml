@@ -1,14 +1,5 @@
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_selected="true">
-        <shape>
-            <corners android:radius="12dp"/>
-            <solid android:color="#404040"/>
-        </shape>
-    </item>
-    <item>
-        <shape>
-            <corners android:radius="12dp"/>
-            <solid android:color="#2D2D2D"/>
-        </shape>
-    </item>
-</selector>
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#2D2D2D"/> <!-- Dark gray instead of black -->
+    <corners android:radius="12dp"/> <!-- Matches the item corners -->
+</shape>

@@ -122,6 +122,16 @@ public class uebungscreator extends AppCompatActivity {
         uebungSpinner.setAdapter(uebungAdapter);
         loadSavedUebungen();
 
+        // Customize Übung Spinner dropdown background
+        try {
+            Field popupField = Spinner.class.getDeclaredField("mPopup");
+            popupField.setAccessible(true);
+            ListPopupWindow popup = (ListPopupWindow) popupField.get(uebungSpinner);
+            popup.setBackgroundDrawable(getResources().getDrawable(R.drawable.spinner_dropdown_background));
+        } catch (Exception e) {
+            Log.e("SpinnerBackground", "Failed to set uebungSpinner background", e);
+        }
+
         // Initialize geraet data
         elementData.put("Boden", constants.Boden);
         elementData.put("Barren", constants.Barren);
@@ -171,6 +181,16 @@ public class uebungscreator extends AppCompatActivity {
             geraeteSpinner.setSelection(0);
         }
 
+        // Customize Geraete Spinner dropdown background
+        try {
+            Field popupField = Spinner.class.getDeclaredField("mPopup");
+            popupField.setAccessible(true);
+            ListPopupWindow popup = (ListPopupWindow) popupField.get(geraeteSpinner);
+            popup.setBackgroundDrawable(getResources().getDrawable(R.drawable.spinner_dropdown_background));
+        } catch (Exception e) {
+            Log.e("SpinnerBackground", "Failed to set geraeteSpinner background", e);
+        }
+
         // Rest of onCreate
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
         setupUebungSpinnerLongPress();
@@ -216,8 +236,7 @@ public class uebungscreator extends AppCompatActivity {
         elementList.setLayoutManager(new LinearLayoutManager(this));
         elementList.setAdapter(adapter);
 
-        // Add spacing instead of divider
-        int spacingInPixels = (int) (8 * getResources().getDisplayMetrics().density); // 8dp converted to pixels
+        int spacingInPixels = (int) (8 * getResources().getDisplayMetrics().density);
         elementList.addItemDecoration(new SpacingItemDecoration(spacingInPixels));
 
         loadUebung(currentUebungName);
