@@ -121,8 +121,8 @@
 
             <View
                 android:id="@+id/drag_handle"
-                android:layout_width="40dp"
-                android:layout_height="6dp"
+                android:layout_width="48dp"
+                android:layout_height="11dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/modern_drag_handle"
                 android:layout_marginTop="8dp"/>

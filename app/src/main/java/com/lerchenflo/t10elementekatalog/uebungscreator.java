@@ -2,6 +2,7 @@ package com.lerchenflo.t10elementekatalog;
 
 import android.content.ClipData;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
@@ -94,7 +95,7 @@ public class uebungscreator extends AppCompatActivity {
         dropZone = findViewById(R.id.dropZone);
         geraeteSpinner = findViewById(R.id.geraeteSpinner);
 
-        // Setup Übung Spinner (unchanged from previous fix)
+        // Setup Übung Spinner
         uebungAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item_dark, uebungenList) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -121,7 +122,7 @@ public class uebungscreator extends AppCompatActivity {
         uebungSpinner.setAdapter(uebungAdapter);
         loadSavedUebungen();
 
-        // Initialize geraet data first (before spinner setup)
+        // Initialize geraet data
         elementData.put("Boden", constants.Boden);
         elementData.put("Barren", constants.Barren);
         elementData.put("Balken", constants.Balken);
@@ -163,16 +164,14 @@ public class uebungscreator extends AppCompatActivity {
             }
         };
         geraeteSpinner.setAdapter(spinnerAdapter);
-        spinnerAdapter.notifyDataSetChanged(); // Ensure adapter refreshes
-        geraeteSpinner.setEnabled(true); // Ensure it's clickable
+        spinnerAdapter.notifyDataSetChanged();
+        geraeteSpinner.setEnabled(true);
         geraeteSpinner.setClickable(true);
-
-        // Verify initial selection
         if (!categories.isEmpty()) {
-            geraeteSpinner.setSelection(0); // Set default selection
+            geraeteSpinner.setSelection(0);
         }
 
-        // Rest of onCreate (unchanged parts)
+        // Rest of onCreate
         findViewById(R.id.backbutton_uebungscreator).setOnClickListener(v -> finish());
         setupUebungSpinnerLongPress();
         uebungSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -217,10 +216,37 @@ public class uebungscreator extends AppCompatActivity {
         elementList.setLayoutManager(new LinearLayoutManager(this));
         elementList.setAdapter(adapter);
 
+        // Add spacing instead of divider
+        int spacingInPixels = (int) (8 * getResources().getDisplayMetrics().density); // 8dp converted to pixels
+        elementList.addItemDecoration(new SpacingItemDecoration(spacingInPixels));
+
         loadUebung(currentUebungName);
         setupDragAndDrop();
         setupPDFviewer();
     }
+
+    // New SpacingItemDecoration class
+    public static class SpacingItemDecoration extends RecyclerView.ItemDecoration {
+        private final int spacing;
+
+        public SpacingItemDecoration(int spacing) {
+            this.spacing = spacing;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view);
+            // Add spacing to all items except the last one
+            if (position != parent.getAdapter().getItemCount() - 1) {
+                outRect.bottom = spacing;
+            }
+            // Add top spacing to the first item only
+            if (position == 0) {
+                outRect.top = spacing;
+            }
+        }
+    }
+
 
     private void setupPDFviewer() {
         Button showpdfbutton = findViewById(R.id.showkatalogbutton);
@@ -228,33 +254,46 @@ public class uebungscreator extends AppCompatActivity {
         pdfView = findViewById(R.id.pdfview_uebungscreator);
         dragHandle = findViewById(R.id.drag_handle);
 
+        // Convert dp to pixels
         minHeightPx = (int) (MIN_HEIGHT_DP * getResources().getDisplayMetrics().density);
         maxHeightPx = (int) (MAX_HEIGHT_DP * getResources().getDisplayMetrics().density);
 
-        dragHandle.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    initialY = event.getRawY();
-                    initialHeight = pdfContainer.getHeight();
-                    return true;
-                case MotionEvent.ACTION_MOVE:
-                    float deltaY = initialY - event.getRawY();
-                    int newHeight = (int) (initialHeight + deltaY);
-                    newHeight = Math.max(minHeightPx, Math.min(newHeight, maxHeightPx));
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) pdfContainer.getLayoutParams();
-                    params.height = newHeight;
-                    pdfContainer.setLayoutParams(params);
-                    if (newHeight == minHeightPx || newHeight == maxHeightPx) {
-                        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                    }
-                    return true;
+        // Set up drag listener
+        dragHandle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialY = event.getRawY();
+                        initialHeight = pdfContainer.getHeight();
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        float deltaY = initialY - event.getRawY();
+                        int newHeight = (int) (initialHeight + deltaY);
+
+                        // Constrain height
+                        newHeight = Math.max(minHeightPx, Math.min(newHeight, maxHeightPx));
+
+                        // Update layout
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) pdfContainer.getLayoutParams();
+                        params.height = newHeight;
+                        pdfContainer.setLayoutParams(params);
+
+                        // Optional: Add haptic feedback
+                        if (newHeight == minHeightPx || newHeight == maxHeightPx) {
+                            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                        }
+                        return true;
+                }
+                return false;
             }
-            return false;
         });
 
         showpdfbutton.setOnClickListener(v -> {
             if (pdfContainer.getVisibility() == View.GONE) {
                 pdfContainer.setVisibility(View.VISIBLE);
+                // Reset to default height when showing
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) pdfContainer.getLayoutParams();
                 params.height = (int) (330 * getResources().getDisplayMetrics().density);
                 pdfContainer.setLayoutParams(params);
@@ -263,6 +302,7 @@ public class uebungscreator extends AppCompatActivity {
             }
         });
     }
+
 
     private void loadSavedUebungen() {
         File directory = getFilesDir();
