@@ -1,26 +1,20 @@
+rootProject.name = "T10App"
+
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
+        google()
         gradlePluginPortal()
-
+        mavenCentral()
     }
 }
+
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven(url = "https://jitpack.io") // Notice the syntax for url
-        jcenter()
     }
 }
 
-rootProject.name = "T10 Elementekatalog"
-include(":app")
+include(":androidApp")
+include(":shared")
+include(":desktopApp")
